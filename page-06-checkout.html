@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout – Spoke</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans:    ['DM Sans', 'sans-serif'],
+            display: ['DM Serif Display', 'serif'],
+          },
+          colors: {
+            brand: {
+              50:  '#f0f4ff',
+              100: '#e0eaff',
+              200: '#c3d4fe',
+              300: '#9ab4fd',
+              400: '#6e8dfb',
+              500: '#4a6cf7',
+              600: '#3451ec',
+              700: '#2a3ed9',
+              800: '#2534b0',
+              900: '#23318b',
+              950: '#161f5a',
+            },
+            surface: {
+              DEFAULT: '#ffffff',
+              muted:   '#f8f9fc',
+              border:  '#e8ecf4',
+            },
+            ink: {
+              DEFAULT: '#111827',
+              muted:   '#6b7280',
+              light:   '#9ca3af',
+            },
+            success: { DEFAULT:'#16a34a', light:'#dcfce7' },
+            danger:  { DEFAULT:'#dc2626', light:'#fee2e2' },
+          },
+          boxShadow: {
+            card:   '0 1px 3px 0 rgba(17,24,39,0.06), 0 1px 2px -1px rgba(17,24,39,0.04)',
+            raised: '0 4px 16px -2px rgba(17,24,39,0.10), 0 2px 6px -2px rgba(17,24,39,0.06)',
+          },
+        }
+      }
+    };
+  </script>
+
+  <style>
+    body { font-family: 'DM Sans', sans-serif; background: #f8f9fc; color: #111827; }
+
+    /* Input focus */
+    .field {
+      @apply w-full px-3.5 py-2.5 bg-white border border-surface-border rounded-lg text-sm text-ink
+             placeholder:text-ink-light focus:outline-none focus:ring-2 focus:ring-brand-500/25 focus:border-brand-500
+             transition-all;
+    }
+
+    /* Card brand icons */
+    .card-option input:checked + label {
+      border-color: #3451ec;
+      background: #f0f4ff;
+    }
+    .card-option label {
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    /* Step indicator */
+    .step-done  { background: #3451ec; border-color: #3451ec; color: white; }
+    .step-active{ background: white;   border-color: #3451ec; color: #3451ec; }
+    .step-idle  { background: white;   border-color: #e8ecf4; color: #9ca3af; }
+
+    /* Coupon success */
+    #coupon-success { display: none; }
+    #coupon-success.show { display: flex; }
+
+    /* Accordion */
+    .acc-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .acc-body.open { max-height: 600px; }
+    .acc-chevron { transition: transform 0.25s ease; }
+    .acc-chevron.open { transform: rotate(180deg); }
+
+    /* Tooltip */
+    [data-tip] { position: relative; cursor: help; }
+    [data-tip]::after {
+      content: attr(data-tip);
+      position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%);
+      background: #111827; color: #fff; font-size: 11px; white-space: nowrap;
+      padding: 4px 8px; border-radius: 6px; pointer-events: none;
+      opacity: 0; transition: opacity 0.15s ease; z-index: 50;
+    }
+    [data-tip]:hover::after { opacity: 1; }
+
+    /* Secure badge */
+    .secure-bar { background: linear-gradient(135deg,#f0f4ff 0%,#e0eaff 100%); }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+<!-- ══════════════════════════════════════
+     HEADER
+══════════════════════════════════════ -->
+<header class="bg-white border-b border-surface-border sticky top-0 z-30">
+  <div class="max-w-screen-xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+    <!-- Logo -->
+    <a href="page-01-home.html" class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <circle cx="9" cy="9" r="3.5" fill="white"/>
+          <path d="M9 1.5V4M9 14V16.5M1.5 9H4M14 9H16.5M3.6 3.6L5.4 5.4M12.6 12.6L14.4 14.4M14.4 3.6L12.6 5.4M5.4 12.6L3.6 14.4" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="font-display text-xl font-medium text-ink">Spoke</span>
+    </a>
+
+    <!-- Steps (desktop) -->
+    <ol class="hidden sm:flex items-center gap-0">
+      <!-- Step 1 -->
+      <li class="flex items-center gap-2">
+        <div class="step-done w-7 h-7 rounded-full border-2 flex items-center justify-center text-xs font-bold flex-shrink-0">
+          <i data-lucide="check" class="w-3.5 h-3.5"></i>
+        </div>
+        <span class="text-xs font-semibold text-brand-600">Cart</span>
+      </li>
+      <li class="w-10 h-px bg-surface-border mx-1"></li>
+      <!-- Step 2 -->
+      <li class="flex items-center gap-2">
+        <div class="step-active w-7 h-7 rounded-full border-2 flex items-center justify-center text-xs font-bold flex-shrink-0">2</div>
+        <span class="text-xs font-semibold text-brand-600">Checkout</span>
+      </li>
+      <li class="w-10 h-px bg-surface-border mx-1"></li>
+      <!-- Step 3 -->
+      <li class="flex items-center gap-2">
+        <div class="step-idle w-7 h-7 rounded-full border-2 flex items-center justify-center text-xs font-bold flex-shrink-0">3</div>
+        <span class="text-xs font-semibold text-ink-light">Confirmation</span>
+      </li>
+    </ol>
+
+    <!-- Right -->
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-1.5 text-xs text-success font-medium">
+        <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+        <span class="hidden sm:inline">Secure Checkout</span>
+      </div>
+      <a href="page-08-cart.html" class="text-sm text-ink-muted hover:text-ink flex items-center gap-1 transition-colors">
+        <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+        <span class="hidden sm:inline">Back to Cart</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════
+     MAIN
+══════════════════════════════════════ -->
+<main class="max-w-screen-xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+  <div class="flex flex-col lg:flex-row gap-8 lg:gap-10 xl:gap-14 items-start">
+
+    <!-- ════════════════════════════════
+         LEFT COLUMN — FORM
+    ════════════════════════════════ -->
+    <div class="flex-1 min-w-0 space-y-6">
+
+      <!-- ── Contact / Account ── -->
+      <div class="bg-white rounded-2xl border border-surface-border shadow-card overflow-hidden">
+        <button class="acc-toggle w-full flex items-center justify-between px-5 py-4 hover:bg-surface-muted transition-colors"
+                onclick="toggleAcc(this)">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-brand-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">1</div>
+            <span class="font-semibold text-ink">Contact Information</span>
+          </div>
+          <i data-lucide="chevron-down" class="acc-chevron open w-4 h-4 text-ink-muted"></i>
+        </button>
+
+        <div class="acc-body open">
+          <div class="px-5 pb-5 pt-1 space-y-4 border-t border-surface-border">
+
+            <!-- Already signed in banner -->
+            <div class="flex items-center gap-3 bg-brand-50 border border-brand-100 rounded-xl px-4 py-3">
+              <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=4a6cf7&color=fff&size=64"
+                   alt="Alex Morgan" class="w-9 h-9 rounded-full flex-shrink-0" />
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-ink">Alex Morgan</p>
+                <p class="text-xs text-ink-muted truncate">alex@example.com</p>
+              </div>
+              <a href="#" class="ml-auto text-xs text-brand-600 hover:underline font-medium flex-shrink-0">Not you?</a>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-ink mb-1.5">First Name</label>
+                <input type="text" class="field" placeholder="Alex" value="Alex" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-ink mb-1.5">Last Name</label>
+                <input type="text" class="field" placeholder="Morgan" value="Morgan" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-ink mb-1.5">Email Address</label>
+              <input type="email" class="field" placeholder="you@example.com" value="alex@example.com" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-ink mb-1.5">Phone <span class="text-ink-light font-normal">(optional)</span></label>
+              <input type="tel" class="field" placeholder="+1 (555) 000-0000" />
+            </div>
+
+            <label class="flex items-start gap-2.5 cursor-pointer">
+              <input type="checkbox" checked class="mt-0.5 w-4 h-4 rounded border-surface-border text-brand-600 focus:ring-brand-500" />
+              <span class="text-xs text-ink-muted leading-relaxed">Send me updates about my courses and new learning resources from Spoke.</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Billing Address ── -->
+      <div class="bg-white rounded-2xl border border-surface-border shadow-card overflow-hidden">
+        <button class="acc-toggle w-full flex items-center justify-between px-5 py-4 hover:bg-surface-muted transition-colors"
+                onclick="toggleAcc(this)">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-brand-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">2</div>
+            <span class="font-semibold text-ink">Billing Address</span>
+          </div>
+          <i data-lucide="chevron-down" class="acc-chevron open w-4 h-4 text-ink-muted"></i>
+        </button>
+
+        <div class="acc-body open">
+          <div class="px-5 pb-5 pt-1 space-y-4 border-t border-surface-border">
+            <div>
+              <label class="block text-xs font-semibold text-ink mb-1.5">Country / Region</label>
+              <div class="relative">
+                <select class="field appearance-none pr-9">
+                  <option>United States</option>
+                  <option>United Kingdom</option>
+                  <option>Canada</option>
+                  <option>Australia</option>
+                  <option>Bangladesh</option>
+                  <option>India</option>
+                  <option selected>Other</option>
+                </select>
+                <i data-lucide="chevron-down" class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted"></i>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-ink mb-1.5">Address Line 1</label>
+              <input type="text" class="field" placeholder="Street address, P.O. Box" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-ink mb-1.5">Address Line 2 <span class="text-ink-light font-normal">(optional)</span></label>
+              <input type="text" class="field" placeholder="Apartment, suite, unit, etc." />
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="sm:col-span-1">
+                <label class="block text-xs font-semibold text-ink mb-1.5">City</label>
+                <input type="text" class="field" placeholder="City" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-ink mb-1.5">State</label>
+                <input type="text" class="field" placeholder="State" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-ink mb-1.5">ZIP / Postal</label>
+                <input type="text" class="field" placeholder="00000" />
+              </div>
+            </div>
+
+            <label class="flex items-center gap-2.5 cursor-pointer">
+              <input type="checkbox" class="w-4 h-4 rounded border-surface-border text-brand-600 focus:ring-brand-500" />
+              <span class="text-xs text-ink-muted">Save this address for future purchases</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Payment ── -->
+      <div class="bg-white rounded-2xl border border-surface-border shadow-card overflow-hidden">
+        <button class="acc-toggle w-full flex items-center justify-between px-5 py-4 hover:bg-surface-muted transition-colors"
+                onclick="toggleAcc(this)">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-brand-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">3</div>
+            <span class="font-semibold text-ink">Payment Method</span>
+          </div>
+          <i data-lucide="chevron-down" class="acc-chevron open w-4 h-4 text-ink-muted"></i>
+        </button>
+
+        <div class="acc-body open">
+          <div class="px-5 pb-5 pt-1 border-t border-surface-border">
+
+            <!-- Payment type tabs -->
+            <div class="flex gap-2 mt-4 mb-5">
+              <div class="card-option flex-1">
+                <input type="radio" name="pay-method" id="pay-card" value="card" class="sr-only" checked />
+                <label for="pay-card" class="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border-2 border-surface-border text-center">
+                  <i data-lucide="credit-card" class="w-5 h-5 text-ink-muted"></i>
+                  <span class="text-xs font-semibold text-ink">Card</span>
+                </label>
+              </div>
+              <div class="card-option flex-1">
+                <input type="radio" name="pay-method" id="pay-paypal" value="paypal" class="sr-only" />
+                <label for="pay-paypal" class="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border-2 border-surface-border text-center">
+                  <!-- PayPal P icon -->
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="text-ink-muted">
+                    <path d="M7 20H5L7.5 6h5.5a5 5 0 0 1 5 5c0 3-2 4.5-5 4.5H10L9 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span class="text-xs font-semibold text-ink">PayPal</span>
+                </label>
+              </div>
+              <div class="card-option flex-1">
+                <input type="radio" name="pay-method" id="pay-stripe" value="stripe" class="sr-only" />
+                <label for="pay-stripe" class="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border-2 border-surface-border text-center">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="text-ink-muted">
+                    <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M2 10h20" stroke="currentColor" stroke-width="1.8"/>
+                  </svg>
+                  <span class="text-xs font-semibold text-ink">Stripe</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Card fields -->
+            <div id="card-fields" class="space-y-4">
+              <!-- Card number -->
+              <div>
+                <label class="block text-xs font-semibold text-ink mb-1.5">Card Number</label>
+                <div class="relative">
+                  <input type="text" id="card-number" class="field pr-20" placeholder="1234 5678 9012 3456"
+                         maxlength="19" oninput="formatCard(this)" />
+                  <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+                    <!-- Visa -->
+                    <svg width="28" height="18" viewBox="0 0 28 18" fill="none"><rect width="28" height="18" rx="3" fill="#1A1F71"/><path d="M11.2 12.5H9.3l1.2-7h1.9l-1.2 7zm-3.8 0H5.6L4 7.2c-.1-.3-.2-.4-.5-.6C2.9 6.3 2.3 6.1 1.8 6l.1-.5h3c.4 0 .7.3.8.7l.7 3.8 1.9-4.5H10L7.4 12.5zm13.2.1c0-1-.3-1.8-.7-2.4l-.6-2.9c-.1-.6-.5-.8-1.2-.8H18l-1.2 6.1h1.9l.3-1.4h.8l.2 1.4H22zm-1.8-2.5.4-2.3.5 2.3h-.9z" fill="white"/></svg>
+                    <!-- MC -->
+                    <svg width="28" height="18" viewBox="0 0 28 18" fill="none"><rect width="28" height="18" rx="3" fill="#F9F9F9"/><circle cx="11" cy="9" r="5" fill="#EB001B"/><circle cx="17" cy="9" r="5" fill="#F79E1B"/><path d="M14 5.3A5 5 0 0 1 16 9a5 5 0 0 1-2 3.7A5 5 0 0 1 12 9a5 5 0 0 1 2-3.7z" fill="#FF5F00"/></svg>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-ink mb-1.5">Expiry Date</label>
+                  <input type="text" class="field" placeholder="MM / YY" maxlength="7"
+                         oninput="formatExpiry(this)" />
+                </div>
+                <div>
+                  <label class="flex items-center gap-1 text-xs font-semibold text-ink mb-1.5">
+                    CVV
+                    <span data-tip="3–4 digit security code on the back of your card" class="text-ink-light">
+                      <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+                    </span>
+                  </label>
+                  <input type="text" class="field" placeholder="•••" maxlength="4" />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-ink mb-1.5">Name on Card</label>
+                <input type="text" class="field" placeholder="As it appears on your card" />
+              </div>
+
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="checkbox" class="w-4 h-4 rounded border-surface-border text-brand-600 focus:ring-brand-500" />
+                <span class="text-xs text-ink-muted">Save card for future purchases</span>
+              </label>
+            </div>
+
+            <!-- PayPal / Stripe placeholder panels -->
+            <div id="paypal-fields" class="hidden">
+              <div class="rounded-xl border-2 border-dashed border-surface-border py-8 flex flex-col items-center gap-3 text-ink-muted">
+                <svg width="56" height="20" viewBox="0 0 56 20" fill="none"><text x="0" y="16" font-family="Arial" font-weight="700" font-size="18" fill="#003087">Pay</text><text x="28" y="16" font-family="Arial" font-weight="700" font-size="18" fill="#009cde">Pal</text></svg>
+                <p class="text-sm text-ink-muted">You'll be redirected to PayPal to complete payment.</p>
+              </div>
+            </div>
+            <div id="stripe-fields" class="hidden">
+              <div class="rounded-xl border-2 border-dashed border-surface-border py-8 flex flex-col items-center gap-3 text-ink-muted">
+                <i data-lucide="shield-check" class="w-8 h-8 text-brand-400"></i>
+                <p class="text-sm text-ink-muted">Powered by Stripe — you'll complete payment securely on the next step.</p>
+              </div>
+            </div>
+
+            <!-- Secure note -->
+            <div class="flex items-center gap-2 mt-4 text-xs text-ink-muted">
+              <i data-lucide="lock" class="w-3.5 h-3.5 text-success flex-shrink-0"></i>
+              <span>Your payment info is encrypted with 256-bit SSL. We never store your full card number.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Coupon ── -->
+      <div class="bg-white rounded-2xl border border-surface-border shadow-card px-5 py-4">
+        <p class="text-sm font-semibold text-ink mb-3">Have a coupon or gift card?</p>
+        <div class="flex gap-2">
+          <input type="text" id="coupon-input" class="field flex-1" placeholder="Enter code" />
+          <button onclick="applyCoupon()"
+                  class="px-4 py-2.5 bg-ink text-white text-sm font-semibold rounded-lg
+                         hover:bg-ink/80 transition-colors flex-shrink-0">
+            Apply
+          </button>
+        </div>
+        <!-- Success state -->
+        <div id="coupon-success" class="items-center gap-2 mt-3 text-xs text-success font-medium">
+          <i data-lucide="check-circle-2" class="w-4 h-4 flex-shrink-0"></i>
+          <span>Coupon <strong>SPOKE20</strong> applied — 20% off!</span>
+        </div>
+        <!-- Error state -->
+        <div id="coupon-error" class="hidden items-center gap-2 mt-3 text-xs text-danger font-medium">
+          <i data-lucide="x-circle" class="w-4 h-4 flex-shrink-0"></i>
+          <span>Invalid coupon code. Please try again.</span>
+        </div>
+      </div>
+
+    </div><!-- /left col -->
+
+    <!-- ════════════════════════════════
+         RIGHT COLUMN — ORDER SUMMARY
+    ════════════════════════════════ -->
+    <div class="w-full lg:w-96 flex-shrink-0 space-y-5 lg:sticky lg:top-24">
+
+      <!-- Summary card -->
+      <div class="bg-white rounded-2xl border border-surface-border shadow-card overflow-hidden">
+        <div class="px-5 py-4 border-b border-surface-border">
+          <h2 class="font-display text-lg font-medium text-ink">Order Summary</h2>
+          <p class="text-xs text-ink-muted mt-0.5">3 items in your cart</p>
+        </div>
+
+        <!-- Items -->
+        <ul class="divide-y divide-surface-border">
+          <!-- Item 1 -->
+          <li class="flex items-start gap-3 px-5 py-4">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="code-2" class="w-6 h-6 text-white"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-ink leading-snug">Advanced React Patterns &amp; Performance</p>
+              <p class="text-xs text-ink-muted mt-0.5">Web Development · 12 lessons</p>
+              <div class="flex items-center gap-1 mt-1">
+                <span class="text-[10px] text-amber-500">★★★★★</span>
+                <span class="text-[10px] text-ink-light">(4.9)</span>
+              </div>
+            </div>
+            <div class="text-right flex-shrink-0">
+              <p class="text-sm font-bold text-ink">$129</p>
+              <p class="text-xs text-ink-light line-through">$179</p>
+            </div>
+          </li>
+
+          <!-- Item 2 -->
+          <li class="flex items-start gap-3 px-5 py-4">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="pen-tool" class="w-6 h-6 text-white"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-ink leading-snug">UX Design Fundamentals</p>
+              <p class="text-xs text-ink-muted mt-0.5">UX/UI Design · 10 lessons</p>
+              <div class="flex items-center gap-1 mt-1">
+                <span class="text-[10px] text-amber-500">★★★★½</span>
+                <span class="text-[10px] text-ink-light">(4.7)</span>
+              </div>
+            </div>
+            <div class="text-right flex-shrink-0">
+              <p class="text-sm font-bold text-ink">$89</p>
+              <p class="text-xs text-ink-light line-through">$119</p>
+            </div>
+          </li>
+
+          <!-- Item 3 -->
+          <li class="flex items-start gap-3 px-5 py-4">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="trending-up" class="w-6 h-6 text-white"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-ink leading-snug">Growth Marketing: Strategy &amp; Analytics</p>
+              <p class="text-xs text-ink-muted mt-0.5">Business · 15 lessons</p>
+              <div class="flex items-center gap-1 mt-1">
+                <span class="text-[10px] text-amber-500">★★★★★</span>
+                <span class="text-[10px] text-ink-light">(4.8)</span>
+              </div>
+            </div>
+            <div class="text-right flex-shrink-0">
+              <p class="text-sm font-bold text-ink">$109</p>
+              <p class="text-xs text-ink-light line-through">$149</p>
+            </div>
+          </li>
+        </ul>
+
+        <!-- Price breakdown -->
+        <div class="px-5 py-4 border-t border-surface-border space-y-2.5">
+          <div class="flex justify-between text-sm">
+            <span class="text-ink-muted">Subtotal</span>
+            <span class="text-ink font-medium">$327.00</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-ink-muted">Original price</span>
+            <span class="text-ink-light line-through">$447.00</span>
+          </div>
+          <div class="flex justify-between text-sm text-success">
+            <span class="font-medium">Course discount</span>
+            <span class="font-medium">−$120.00</span>
+          </div>
+          <div id="coupon-row" class="hidden justify-between text-sm text-success">
+            <span class="font-medium">Coupon (SPOKE20)</span>
+            <span class="font-medium">−$65.40</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-ink-muted">Tax (VAT 0%)</span>
+            <span class="text-ink-muted">$0.00</span>
+          </div>
+          <div class="h-px bg-surface-border my-1"></div>
+          <div class="flex justify-between">
+            <span class="font-bold text-ink text-base">Total</span>
+            <div class="text-right">
+              <p id="total-price" class="font-bold text-ink text-xl font-display">$327.00</p>
+              <p class="text-xs text-success font-medium">You save $120.00</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="px-5 pb-5 pt-1 space-y-3">
+          <button onclick="handleCheckout()"
+                  class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3.5 rounded-xl
+                         transition-all flex items-center justify-center gap-2 text-sm shadow-raised
+                         active:scale-[0.98]">
+            <i data-lucide="lock" class="w-4 h-4"></i>
+            Complete Purchase
+          </button>
+          <p class="text-center text-[10px] text-ink-light leading-relaxed">
+            By completing your purchase you agree to our
+            <a href="#" class="text-brand-600 hover:underline">Terms of Service</a> and
+            <a href="#" class="text-brand-600 hover:underline">Privacy Policy</a>.
+          </p>
+        </div>
+      </div>
+
+      <!-- 30-day guarantee -->
+      <div class="bg-white rounded-2xl border border-surface-border shadow-card px-5 py-4 flex items-start gap-4">
+        <div class="w-12 h-12 rounded-xl bg-success-light flex items-center justify-center flex-shrink-0">
+          <i data-lucide="shield-check" class="w-6 h-6 text-success"></i>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-ink">30-Day Money-Back Guarantee</p>
+          <p class="text-xs text-ink-muted mt-1 leading-relaxed">Not satisfied? Get a full refund within 30 days — no questions asked.</p>
+        </div>
+      </div>
+
+      <!-- Accepted payments -->
+      <div class="bg-white rounded-2xl border border-surface-border shadow-card px-5 py-4">
+        <p class="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-3">Accepted Payments</p>
+        <div class="flex flex-wrap gap-2 items-center">
+          <!-- Visa -->
+          <div class="h-8 px-2 bg-surface-muted border border-surface-border rounded-md flex items-center">
+            <svg width="32" height="12" viewBox="0 0 32 12"><text x="0" y="11" font-family="Arial" font-weight="900" font-size="12" fill="#1A1F71">VISA</text></svg>
+          </div>
+          <!-- Mastercard -->
+          <div class="h-8 px-2 bg-surface-muted border border-surface-border rounded-md flex items-center gap-1">
+            <div class="w-4 h-4 rounded-full bg-red-500 opacity-90"></div>
+            <div class="w-4 h-4 rounded-full bg-yellow-400 opacity-90 -ml-2"></div>
+          </div>
+          <!-- Amex -->
+          <div class="h-8 px-2 bg-surface-muted border border-surface-border rounded-md flex items-center">
+            <svg width="30" height="12" viewBox="0 0 30 12"><text x="0" y="11" font-family="Arial" font-weight="700" font-size="10" fill="#016FD0">AMEX</text></svg>
+          </div>
+          <!-- PayPal -->
+          <div class="h-8 px-2 bg-surface-muted border border-surface-border rounded-md flex items-center">
+            <svg width="42" height="12" viewBox="0 0 42 12"><text x="0" y="11" font-family="Arial" font-weight="700" font-size="11" fill="#003087">Pay</text><text x="22" y="11" font-family="Arial" font-weight="700" font-size="11" fill="#009cde">Pal</text></svg>
+          </div>
+          <!-- Apple Pay -->
+          <div class="h-8 px-2 bg-surface-muted border border-surface-border rounded-md flex items-center">
+            <svg width="36" height="12" viewBox="0 0 36 12"><text x="0" y="11" font-family="Arial" font-size="10" fill="#111827"> Pay</text></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trust badges -->
+      <div class="grid grid-cols-3 gap-3 text-center">
+        <div class="bg-white rounded-xl border border-surface-border shadow-card px-2 py-3 flex flex-col items-center gap-1.5">
+          <i data-lucide="lock" class="w-5 h-5 text-success"></i>
+          <p class="text-[10px] text-ink-muted font-medium leading-tight">SSL Encrypted</p>
+        </div>
+        <div class="bg-white rounded-xl border border-surface-border shadow-card px-2 py-3 flex flex-col items-center gap-1.5">
+          <i data-lucide="refresh-ccw" class="w-5 h-5 text-brand-500"></i>
+          <p class="text-[10px] text-ink-muted font-medium leading-tight">Easy Refunds</p>
+        </div>
+        <div class="bg-white rounded-xl border border-surface-border shadow-card px-2 py-3 flex flex-col items-center gap-1.5">
+          <i data-lucide="headphones" class="w-5 h-5 text-purple-500"></i>
+          <p class="text-[10px] text-ink-muted font-medium leading-tight">24/7 Support</p>
+        </div>
+      </div>
+
+    </div><!-- /right col -->
+  </div><!-- /flex -->
+</main>
+
+<!-- ══════════════════════════════════════
+     CHECKOUT LOADING OVERLAY
+══════════════════════════════════════ -->
+<div id="checkout-overlay"
+     class="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 hidden flex-col items-center justify-center gap-4">
+  <div class="w-14 h-14 rounded-2xl bg-brand-600 flex items-center justify-center shadow-raised animate-bounce">
+    <i data-lucide="lock" class="w-7 h-7 text-white"></i>
+  </div>
+  <p class="font-semibold text-ink">Processing your payment…</p>
+  <p class="text-sm text-ink-muted">Please don't close this window.</p>
+  <!-- Progress bar -->
+  <div class="w-56 h-1.5 bg-surface-border rounded-full overflow-hidden mt-2">
+    <div id="pay-progress" class="h-full bg-brand-600 rounded-full transition-all duration-500" style="width:0%"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     FOOTER STRIP
+══════════════════════════════════════ -->
+<footer class="border-t border-surface-border mt-12 py-6 bg-white">
+  <div class="max-w-screen-xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-ink-muted">
+    <p>© 2026 Spoke Learning, Inc. All rights reserved.</p>
+    <div class="flex items-center gap-4">
+      <a href="#" class="hover:text-ink transition-colors">Privacy Policy</a>
+      <a href="#" class="hover:text-ink transition-colors">Terms of Service</a>
+      <a href="#" class="hover:text-ink transition-colors">Refund Policy</a>
+      <a href="#" class="hover:text-ink transition-colors">Contact Support</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════ -->
+<script>
+  lucide.createIcons();
+
+  /* ── Accordion ── */
+  function toggleAcc(btn) {
+    const body     = btn.nextElementSibling;
+    const chevron  = btn.querySelector('.acc-chevron');
+    const isOpen   = body.classList.contains('open');
+    body.classList.toggle('open', !isOpen);
+    chevron.classList.toggle('open', !isOpen);
+  }
+
+  /* ── Payment method switch ── */
+  document.querySelectorAll('input[name="pay-method"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.getElementById('card-fields').classList.add('hidden');
+      document.getElementById('paypal-fields').classList.add('hidden');
+      document.getElementById('stripe-fields').classList.add('hidden');
+
+      if (radio.value === 'card')   document.getElementById('card-fields').classList.remove('hidden');
+      if (radio.value === 'paypal') document.getElementById('paypal-fields').classList.remove('hidden');
+      if (radio.value === 'stripe') document.getElementById('stripe-fields').classList.remove('hidden');
+      lucide.createIcons();
+    });
+  });
+
+  /* ── Card number format ── */
+  function formatCard(el) {
+    let v = el.value.replace(/\D/g,'').substring(0,16);
+    el.value = v.match(/.{1,4}/g)?.join(' ') || v;
+  }
+
+  /* ── Expiry format ── */
+  function formatExpiry(el) {
+    let v = el.value.replace(/\D/g,'').substring(0,4);
+    if (v.length >= 3) v = v.substring(0,2) + ' / ' + v.substring(2);
+    el.value = v;
+  }
+
+  /* ── Coupon ── */
+  let couponApplied = false;
+  function applyCoupon() {
+    const code     = document.getElementById('coupon-input').value.trim().toUpperCase();
+    const ok       = document.getElementById('coupon-success');
+    const err      = document.getElementById('coupon-error');
+    const row      = document.getElementById('coupon-row');
+    const total    = document.getElementById('total-price');
+
+    ok.classList.remove('show'); ok.style.display='none';
+    err.classList.add('hidden');
+
+    if (code === 'SPOKE20' && !couponApplied) {
+      couponApplied = true;
+      ok.style.display='flex'; ok.classList.add('show');
+      row.classList.remove('hidden'); row.style.display='flex';
+      total.textContent = '$261.60';
+      lucide.createIcons();
+    } else if (couponApplied) {
+      ok.style.display='flex'; ok.classList.add('show');
+    } else {
+      err.classList.remove('hidden'); err.style.display='flex';
+      lucide.createIcons();
+    }
+  }
+
+  /* ── Checkout ── */
+  function handleCheckout() {
+    const overlay  = document.getElementById('checkout-overlay');
+    const bar      = document.getElementById('pay-progress');
+    overlay.classList.remove('hidden');
+    overlay.style.display='flex';
+    lucide.createIcons();
+
+    let pct = 0;
+    const iv = setInterval(() => {
+      pct += Math.random() * 22;
+      bar.style.width = Math.min(pct, 92) + '%';
+      if (pct >= 92) {
+        clearInterval(iv);
+        setTimeout(() => {
+          bar.style.width = '100%';
+          setTimeout(() => {
+            window.location.href = 'page-07-order-confirmation.html';
+          }, 500);
+        }, 600);
+      }
+    }, 400);
+  }
+
+  // Allow Enter on coupon input
+  document.getElementById('coupon-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') applyCoupon();
+  });
+</script>
+
+</body>
+</html>

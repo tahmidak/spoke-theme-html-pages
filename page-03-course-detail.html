@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Strategic Leadership &amp; Digital Transformation – Academy Editorial</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+
+    /* Tab underline active */
+    .tab-btn.active {
+      color: #002653;
+      font-weight: 700;
+      border-bottom: 2px solid #fdaf2e;
+    }
+    .tab-btn {
+      color: #43474f;
+      font-weight: 500;
+      border-bottom: 2px solid transparent;
+    }
+
+    /* Accordion */
+    .accordion-body { display: none; }
+    .accordion-body.open { display: block; }
+    .accordion-chevron { transition: transform 0.25s; }
+    .accordion-chevron.rotated { transform: rotate(180deg); }
+
+    /* Sticky card */
+    @media (min-width: 1024px) {
+      .sticky-card { position: sticky; top: 24px; }
+    }
+
+    /* Line-through price */
+    .line-through-price { text-decoration: line-through; }
+
+    /* Rating bar */
+    .rating-bar-fill { transition: width 0.4s ease; }
+  </style>
+</head>
+<body class="bg-[#f8f9fa] text-[#002653] antialiased">
+
+  <!-- ============================================================
+       HERO / COURSE BANNER
+  ============================================================ -->
+  <section class="relative overflow-hidden" style="background: linear-gradient(160deg, #002653 0%, #252539 100%);">
+    <!-- decorative overlay -->
+    <div class="absolute inset-0 opacity-90 pointer-events-none" style="background: linear-gradient(160deg, #002653 0%, #252539 100%);"></div>
+
+    <div class="relative max-w-[1280px] mx-auto px-6 lg:px-8 py-20 lg:py-24 grid lg:grid-cols-[1fr_400px] gap-12 items-start">
+
+      <!-- LEFT: course info -->
+      <div class="flex flex-col gap-6">
+
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-[14px] text-[#8aa8e0] flex-wrap">
+          <a href="#" class="hover:text-white transition-colors">Courses</a>
+          <svg class="w-2.5 h-2.5 opacity-60" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          <a href="#" class="hover:text-white transition-colors">Professional Development</a>
+          <svg class="w-2.5 h-2.5 opacity-60" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          <span class="text-white">Strategic Leadership</span>
+        </nav>
+
+        <!-- Title -->
+        <h1 class="text-white font-bold text-[36px] sm:text-[44px] lg:text-[48px] leading-tight tracking-[-1.2px]">
+          Strategic Leadership &amp; Digital Transformation
+        </h1>
+
+        <!-- Rating + Instructor -->
+        <div class="flex flex-wrap items-center gap-6">
+          <!-- Rating pill -->
+          <div class="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-1.5">
+            <span class="text-[#fdaf2e] font-bold text-[16px]">4.9</span>
+            <div class="flex gap-0.5">
+              <svg class="w-3 h-3 text-[#fdaf2e]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-3 h-3 text-[#fdaf2e]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-3 h-3 text-[#fdaf2e]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-3 h-3 text-[#fdaf2e]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-3 h-3 text-[#fdaf2e]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            </div>
+            <span class="text-[#8aa8e0] text-[12px]">(1,240 Reviews)</span>
+          </div>
+
+          <!-- Instructor pill -->
+          <div class="flex items-center gap-3">
+            <img src="https://www.figma.com/api/mcp/asset/64f0de79-fa80-4ce2-b89b-1cee1380abdc" alt="Dr. Alistair Vance" class="w-10 h-10 rounded object-cover shadow-md" />
+            <div>
+              <p class="text-[#8aa8e0] text-[12px]">Instructor</p>
+              <p class="text-white font-semibold text-[14px]">Dr. Alistair Vance</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Badges -->
+        <div class="flex flex-wrap gap-3">
+          <span class="bg-[rgba(253,175,46,0.2)] border border-[rgba(253,175,46,0.3)] text-[#fdaf2e] text-[11px] font-bold uppercase tracking-[0.3px] px-4 py-1.5 rounded">CPD Accredited</span>
+          <span class="bg-white/10 border border-white/20 text-white text-[11px] font-bold uppercase tracking-[0.3px] px-4 py-1.5 rounded">Advanced Level</span>
+          <span class="bg-white/10 border border-white/20 text-white text-[11px] font-bold uppercase tracking-[0.3px] px-4 py-1.5 rounded">12 Weeks</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: Enroll Card -->
+      <div class="sticky-card w-full">
+        <div class="bg-white rounded-xl shadow-2xl overflow-hidden">
+
+          <!-- Course preview image with play button -->
+          <div class="relative h-[200px] sm:h-[220px]">
+            <img src="https://www.figma.com/api/mcp/asset/61214498-90d5-4e90-85e9-d3fc9d4d5c34" alt="Course preview" class="w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+              <button class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-xl hover:scale-105 transition-transform" aria-label="Play preview">
+                <!-- Play icon -->
+                <svg class="w-5 h-5 text-[#002653] ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Pricing + CTA -->
+          <div class="p-6 flex flex-col gap-4">
+            <!-- Price row -->
+            <div class="flex items-baseline gap-3">
+              <span class="text-[#002653] font-bold text-[30px]">£49.00</span>
+              <span class="text-[#43474f] text-[18px] line-through-price">£99.00</span>
+              <span class="bg-[rgba(255,218,214,0.4)] text-[#ba1a1a] font-bold text-[13px] px-2 py-0.5 rounded">50% OFF</span>
+            </div>
+
+            <!-- Enrol button -->
+            <button class="w-full bg-[#fdaf2e] text-[#6b4500] font-extrabold text-[18px] py-4 rounded-lg shadow-[0_4px_12px_rgba(253,175,46,0.3)] hover:brightness-105 transition">
+              Enrol Now
+            </button>
+
+            <!-- Money-back guarantee -->
+            <div class="bg-[#f3f4f5] border-l-4 border-[#c8e6c9] rounded-lg px-4 py-3 flex items-center gap-3">
+              <svg class="w-5 h-5 text-[#388e3c] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              <span class="text-[#43474f] text-[13px] font-medium">30-Day Money-Back Guarantee</span>
+            </div>
+
+            <!-- Includes list -->
+            <ul class="flex flex-col gap-3 text-[14px] text-[#43474f]">
+              <li class="flex items-center gap-3">
+                <svg class="w-4 h-4 text-[#002653] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Full lifetime access to all materials
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-4 h-4 text-[#002653] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                CPD-accredited certificate of completion
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-4 h-4 text-[#002653] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Access on mobile, tablet &amp; desktop
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-4 h-4 text-[#002653] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Direct Q&amp;A with instructor
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       MAIN CONTENT AREA
+  ============================================================ -->
+  <main class="max-w-[1280px] mx-auto px-6 lg:px-8 py-12 lg:grid lg:grid-cols-[1fr_400px] gap-12">
+
+    <!-- LEFT column: tabs + content -->
+    <div class="flex flex-col gap-16 min-w-0">
+
+      <!-- TABS -->
+      <div>
+        <div class="flex border-b border-[rgba(196,198,208,0.2)] overflow-x-auto" role="tablist">
+          <button class="tab-btn active shrink-0 px-6 pb-4 pt-4 text-[14px]" data-tab="overview" role="tab">Overview</button>
+          <button class="tab-btn shrink-0 px-6 pb-4 pt-4 text-[14px]" data-tab="curriculum" role="tab">Curriculum</button>
+          <button class="tab-btn shrink-0 px-6 pb-4 pt-4 text-[14px]" data-tab="instructor" role="tab">Instructor</button>
+          <button class="tab-btn shrink-0 px-6 pb-4 pt-4 text-[14px]" data-tab="reviews" role="tab">Reviews</button>
+        </div>
+
+        <!-- TAB PANELS -->
+
+        <!-- Overview -->
+        <div id="tab-overview" class="tab-panel pt-8">
+          <div class="bg-white rounded-xl shadow-[0_8px_32px_rgba(26,60,110,0.04)] p-8 flex flex-col gap-6">
+            <h2 class="font-bold text-[#002653] text-[22px]">What you'll learn</h2>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <!-- Outcome 1 -->
+              <div class="bg-[#f8f9fa] rounded-lg p-4 flex gap-3 items-start">
+                <svg class="w-5 h-5 text-[#002653] shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                <p class="text-[#43474f] text-[14px] leading-relaxed">Design and implement digital transformation frameworks across large organizations.</p>
+              </div>
+              <!-- Outcome 2 -->
+              <div class="bg-[#f8f9fa] rounded-lg p-4 flex gap-3 items-start">
+                <svg class="w-5 h-5 text-[#002653] shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                <p class="text-[#43474f] text-[14px] leading-relaxed">Master the art of stakeholder management in complex, changing environments.</p>
+              </div>
+              <!-- Outcome 3 -->
+              <div class="bg-[#f8f9fa] rounded-lg p-4 flex gap-3 items-start">
+                <svg class="w-5 h-5 text-[#002653] shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                <p class="text-[#43474f] text-[14px] leading-relaxed">Utilize data analytics to drive strategic decision-making and forecasting.</p>
+              </div>
+              <!-- Outcome 4 -->
+              <div class="bg-[#f8f9fa] rounded-lg p-4 flex gap-3 items-start">
+                <svg class="w-5 h-5 text-[#002653] shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                <p class="text-[#43474f] text-[14px] leading-relaxed">Build and lead high-performance agile teams in a remote-first world.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Curriculum -->
+        <div id="tab-curriculum" class="tab-panel pt-8 hidden">
+          <h2 class="font-bold text-[#002653] text-[22px] mb-6">Course Curriculum</h2>
+          <div class="flex flex-col gap-4">
+
+            <!-- Module 1 (open by default) -->
+            <div class="rounded-xl overflow-hidden shadow-sm">
+              <button class="accordion-toggle w-full bg-[#002653] px-6 py-5 flex items-center justify-between text-left" data-module="mod1">
+                <div class="flex flex-col gap-1">
+                  <span class="text-[#8aa8e0] text-[11px] font-bold uppercase tracking-[1.2px]">Module 01</span>
+                  <span class="text-white font-semibold text-[15px]">Foundations of Digital Strategy</span>
+                </div>
+                <div class="flex items-center gap-4 shrink-0">
+                  <span class="text-white/70 text-[12px]">4 Lessons • 45m</span>
+                  <svg class="accordion-chevron w-4 h-4 text-white rotated" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </div>
+              </button>
+              <div id="mod1" class="accordion-body open bg-white divide-y divide-[rgba(196,198,208,0.1)]">
+                <div class="flex items-center justify-between px-6 py-4">
+                  <div class="flex items-center gap-4">
+                    <!-- video icon -->
+                    <svg class="w-4 h-4 text-[#002653] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="text-[#191c1d] text-[14px] font-medium">Welcome &amp; Introduction to the Course</span>
+                  </div>
+                  <svg class="w-3 h-4 text-[#43474f] opacity-40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                </div>
+                <div class="flex items-center justify-between px-6 py-4">
+                  <div class="flex items-center gap-4">
+                    <!-- doc icon -->
+                    <svg class="w-4 h-4 text-[#002653] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <span class="text-[#191c1d] text-[14px] font-medium">The History of Strategic Management</span>
+                  </div>
+                  <svg class="w-3 h-4 text-[#43474f] opacity-40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                </div>
+                <div class="flex items-center justify-between px-6 py-4">
+                  <div class="flex items-center gap-4">
+                    <!-- quiz icon -->
+                    <svg class="w-4 h-4 text-[#002653] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                    <span class="text-[#191c1d] text-[14px] font-medium">Knowledge Check: Strategy Foundations</span>
+                  </div>
+                  <svg class="w-3 h-4 text-[#43474f] opacity-40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Module 2 (collapsed) -->
+            <div class="rounded-xl overflow-hidden shadow-sm">
+              <button class="accordion-toggle w-full bg-[#002653] px-6 py-5 flex items-center justify-between text-left" data-module="mod2">
+                <div class="flex flex-col gap-1">
+                  <span class="text-[#8aa8e0] text-[11px] font-bold uppercase tracking-[1.2px]">Module 02</span>
+                  <span class="text-white font-semibold text-[15px]">Leadership in a Volatile World</span>
+                </div>
+                <div class="flex items-center gap-4 shrink-0">
+                  <span class="text-white/70 text-[12px]">6 Lessons • 1h 20m</span>
+                  <svg class="accordion-chevron w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </div>
+              </button>
+              <div id="mod2" class="accordion-body bg-white divide-y divide-[rgba(196,198,208,0.1)]">
+                <div class="flex items-center justify-between px-6 py-4">
+                  <div class="flex items-center gap-4">
+                    <svg class="w-4 h-4 text-[#002653] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="text-[#191c1d] text-[14px] font-medium">Leading Through Uncertainty</span>
+                  </div>
+                  <svg class="w-3 h-4 text-[#43474f] opacity-40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                </div>
+                <div class="flex items-center justify-between px-6 py-4">
+                  <div class="flex items-center gap-4">
+                    <svg class="w-4 h-4 text-[#002653] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="text-[#191c1d] text-[14px] font-medium">Adaptive Leadership Frameworks</span>
+                  </div>
+                  <svg class="w-3 h-4 text-[#43474f] opacity-40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Module 3 (collapsed) -->
+            <div class="rounded-xl overflow-hidden shadow-sm">
+              <button class="accordion-toggle w-full bg-[#002653] px-6 py-5 flex items-center justify-between text-left" data-module="mod3">
+                <div class="flex flex-col gap-1">
+                  <span class="text-[#8aa8e0] text-[11px] font-bold uppercase tracking-[1.2px]">Module 03</span>
+                  <span class="text-white font-semibold text-[15px]">Data-Driven Decision Making</span>
+                </div>
+                <div class="flex items-center gap-4 shrink-0">
+                  <span class="text-white/70 text-[12px]">5 Lessons • 1h 05m</span>
+                  <svg class="accordion-chevron w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </div>
+              </button>
+              <div id="mod3" class="accordion-body bg-white"></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Instructor -->
+        <div id="tab-instructor" class="tab-panel pt-8 hidden">
+          <div class="bg-[#f3f4f5] rounded-xl p-8 flex flex-col gap-8">
+            <h2 class="font-bold text-[#002653] text-[22px]">Your Instructor</h2>
+            <div class="flex flex-col sm:flex-row gap-8 items-start">
+              <img
+                src="https://www.figma.com/api/mcp/asset/5c227445-122d-4f0b-93bc-854db9c6cb92"
+                alt="Dr. Alistair Vance"
+                class="w-40 h-40 rounded-lg object-cover shadow-lg shrink-0"
+              />
+              <div class="flex flex-col gap-2 flex-1">
+                <h3 class="text-[#002653] font-bold text-[20px]">Dr. Alistair Vance</h3>
+                <p class="text-[#825500] font-semibold text-[14px]">PhD in Organizational Leadership, Ex-McKinsey Partner</p>
+                <p class="text-[#43474f] text-[14px] leading-relaxed mt-2">
+                  With over 20 years of experience in management consulting and executive coaching, Dr. Vance has helped Fortune 500 companies navigate the complexities of the digital age. He specializes in behavioral economics and strategic pivoting.
+                </p>
+                <!-- Stats -->
+                <div class="flex flex-wrap gap-4 mt-4">
+                  <div class="bg-white rounded-lg px-4 py-2 shadow-sm">
+                    <p class="text-[#43474f] text-[12px]">Students</p>
+                    <p class="text-[#002653] font-bold text-[18px]">12,400+</p>
+                  </div>
+                  <div class="bg-white rounded-lg px-4 py-2 shadow-sm">
+                    <p class="text-[#43474f] text-[12px]">Courses</p>
+                    <p class="text-[#002653] font-bold text-[18px]">8</p>
+                  </div>
+                  <div class="bg-white rounded-lg px-4 py-2 shadow-sm">
+                    <p class="text-[#43474f] text-[12px]">Reviews</p>
+                    <p class="text-[#002653] font-bold text-[18px]">4,920</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reviews -->
+        <div id="tab-reviews" class="tab-panel pt-8 hidden">
+          <h2 class="font-bold text-[#002653] text-[22px] mb-8">Student Feedback</h2>
+          <div class="grid sm:grid-cols-[180px_1fr] gap-10 items-center mb-8">
+            <!-- Big rating -->
+            <div class="flex flex-col items-center gap-2">
+              <span class="text-[#825500] font-extrabold text-[60px] leading-none">4.9</span>
+              <div class="flex gap-1">
+                <svg class="w-5 h-5 text-[#825500]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                <svg class="w-5 h-5 text-[#825500]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                <svg class="w-5 h-5 text-[#825500]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                <svg class="w-5 h-5 text-[#825500]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                <svg class="w-5 h-5 text-[#825500]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              </div>
+              <span class="text-[#002653] font-bold text-[13px]">Course Rating</span>
+            </div>
+
+            <!-- Rating bars -->
+            <div class="flex flex-col gap-3">
+              <div class="flex items-center gap-4">
+                <div class="flex-1 bg-[#e7e8e9] rounded-full h-2.5 overflow-hidden"><div class="bg-[#825500] h-full rounded-full" style="width:92%"></div></div>
+                <span class="text-[#43474f] text-[12px] font-bold w-8">92%</span>
+              </div>
+              <div class="flex items-center gap-4">
+                <div class="flex-1 bg-[#e7e8e9] rounded-full h-2.5 overflow-hidden"><div class="bg-[#825500] h-full rounded-full" style="width:6%"></div></div>
+                <span class="text-[#43474f] text-[12px] font-bold w-8">6%</span>
+              </div>
+              <div class="flex items-center gap-4">
+                <div class="flex-1 bg-[#e7e8e9] rounded-full h-2.5 overflow-hidden"><div class="bg-[#825500] h-full rounded-full" style="width:2%"></div></div>
+                <span class="text-[#43474f] text-[12px] font-bold w-8">2%</span>
+              </div>
+              <div class="flex items-center gap-4 opacity-30">
+                <div class="flex-1 bg-[#e7e8e9] rounded-full h-2.5"></div>
+                <span class="text-[#43474f] text-[12px] font-bold w-8">0%</span>
+              </div>
+              <div class="flex items-center gap-4 opacity-30">
+                <div class="flex-1 bg-[#e7e8e9] rounded-full h-2.5"></div>
+                <span class="text-[#43474f] text-[12px] font-bold w-8">0%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /tabs -->
+
+    </div><!-- /left column -->
+
+    <!-- RIGHT column: spacer (card already rendered above in hero) -->
+    <div class="hidden lg:block"></div>
+
+  </main>
+
+
+  <!-- ============================================================
+       RELATED COURSES
+  ============================================================ -->
+  <section class="bg-[#f3f4f5] py-20">
+    <div class="max-w-[1280px] mx-auto px-6 lg:px-8">
+
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+        <div>
+          <h2 class="font-bold text-[#002653] text-[28px] lg:text-[30px]">Continue Your Learning</h2>
+          <p class="text-[#43474f] text-[15px] mt-1">Students who took this course also explored these professional pathways.</p>
+        </div>
+        <a href="#" class="flex items-center gap-2 text-[#002653] font-bold text-[15px] hover:underline whitespace-nowrap">
+          View All Courses
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <!-- Related Card 1 -->
+        <article class="bg-white rounded-xl overflow-hidden shadow-sm flex flex-col">
+          <div class="h-48 overflow-hidden">
+            <img src="https://www.figma.com/api/mcp/asset/d3d5e618-d57a-4d1b-bb76-5326fe69d11c" alt="Executive Presence & Influence" class="w-full h-full object-cover" />
+          </div>
+          <div class="p-6 flex flex-col gap-3 flex-1">
+            <span class="bg-[rgba(253,175,46,0.2)] text-[#825500] text-[10px] font-extrabold uppercase tracking-[1px] px-2 py-0.5 rounded self-start">Business</span>
+            <h3 class="font-bold text-[#002653] text-[17px] leading-snug">Executive Presence &amp; Influence</h3>
+            <div class="flex items-center gap-3 text-[12px] text-[#43474f]">
+              <div class="flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                4,200 Students
+              </div>
+              <span class="opacity-30">|</span>
+              <div class="flex items-center gap-1">
+                <svg class="w-3 h-3 text-[#825500]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                4.8
+              </div>
+            </div>
+            <div class="flex items-center justify-between pt-3 mt-auto border-t border-[rgba(196,198,208,0.1)]">
+              <span class="text-[#002653] font-bold text-[20px]">£39.00</span>
+              <a href="#" class="text-[#002653] font-bold text-[14px] hover:underline">Learn More</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Related Card 2 -->
+        <article class="bg-white rounded-xl overflow-hidden shadow-sm flex flex-col">
+          <div class="h-48 overflow-hidden">
+            <img src="https://www.figma.com/api/mcp/asset/834452a9-ef78-4cc8-acea-02f9ffc1738b" alt="Advanced Data Analytics for Leaders" class="w-full h-full object-cover" />
+          </div>
+          <div class="p-6 flex flex-col gap-3 flex-1">
+            <span class="bg-[rgba(253,175,46,0.2)] text-[#825500] text-[10px] font-extrabold uppercase tracking-[1px] px-2 py-0.5 rounded self-start">Finance</span>
+            <h3 class="font-bold text-[#002653] text-[17px] leading-snug">Advanced Data Analytics for Leaders</h3>
+            <div class="flex items-center gap-3 text-[12px] text-[#43474f]">
+              <div class="flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                2,850 Students
+              </div>
+              <span class="opacity-30">|</span>
+              <div class="flex items-center gap-1">
+                <svg class="w-3 h-3 text-[#825500]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                4.9
+              </div>
+            </div>
+            <div class="flex items-center justify-between pt-3 mt-auto border-t border-[rgba(196,198,208,0.1)]">
+              <span class="text-[#002653] font-bold text-[20px]">£59.00</span>
+              <a href="#" class="text-[#002653] font-bold text-[14px] hover:underline">Learn More</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Related Card 3 -->
+        <article class="bg-white rounded-xl overflow-hidden shadow-sm flex flex-col sm:col-span-2 lg:col-span-1">
+          <div class="h-48 overflow-hidden">
+            <img src="https://www.figma.com/api/mcp/asset/9f6909e8-60bb-4574-961e-df328851bf6f" alt="High-Performance Team Dynamics" class="w-full h-full object-cover" />
+          </div>
+          <div class="p-6 flex flex-col gap-3 flex-1">
+            <span class="bg-[rgba(253,175,46,0.2)] text-[#825500] text-[10px] font-extrabold uppercase tracking-[1px] px-2 py-0.5 rounded self-start">Leadership</span>
+            <h3 class="font-bold text-[#002653] text-[17px] leading-snug">High-Performance Team Dynamics</h3>
+            <div class="flex items-center gap-3 text-[12px] text-[#43474f]">
+              <div class="flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                5,120 Students
+              </div>
+              <span class="opacity-30">|</span>
+              <div class="flex items-center gap-1">
+                <svg class="w-3 h-3 text-[#825500]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                4.7
+              </div>
+            </div>
+            <div class="flex items-center justify-between pt-3 mt-auto border-t border-[rgba(196,198,208,0.1)]">
+              <span class="text-[#002653] font-bold text-[20px]">£45.00</span>
+              <a href="#" class="text-[#002653] font-bold text-[14px] hover:underline">Learn More</a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       JS – Tabs + Accordion
+  ============================================================ -->
+  <script>
+    // ---- TABS ----
+    const tabBtns   = document.querySelectorAll('.tab-btn');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.tab;
+
+        // Update buttons
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Show/hide panels
+        tabPanels.forEach(panel => {
+          panel.classList.toggle('hidden', panel.id !== `tab-${target}`);
+        });
+      });
+    });
+
+    // ---- ACCORDION ----
+    document.querySelectorAll('.accordion-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const moduleId = btn.dataset.module;
+        const body     = document.getElementById(moduleId);
+        const chevron  = btn.querySelector('.accordion-chevron');
+
+        const isOpen = body.classList.contains('open');
+        body.classList.toggle('open', !isOpen);
+        chevron.classList.toggle('rotated', !isOpen);
+      });
+    });
+  </script>
+</body>
+</html>

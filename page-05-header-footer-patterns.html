@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Header & Footer Patterns — StudyMate Central</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              navy:   '#002653',
+              amber:  '#fdaf2e',
+              green:  '#e8f4ec',
+              muted:  '#43474f',
+              light:  '#f8f9fa',
+              mid:    '#f3f4f5',
+              border: 'rgba(196,198,208,0.15)',
+              'border-solid': '#c4c6d0',
+            },
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          boxShadow: {
+            card:   '0 8px 32px 0 rgba(26,60,110,0.04)',
+            amber:  '0 10px 15px -3px rgba(253,175,46,0.2), 0 4px 6px -4px rgba(253,175,46,0.2)',
+            nav:    '0 2px 12px 0 rgba(26,60,110,0.06)',
+          },
+          keyframes: {
+            fadeDown: { '0%': { opacity:'0', transform:'translateY(-8px)' }, '100%': { opacity:'1', transform:'translateY(0)' } },
+            fadeUp:   { '0%': { opacity:'0', transform:'translateY(12px)' }, '100%': { opacity:'1', transform:'translateY(0)' } },
+          },
+          animation: {
+            fadeDown: 'fadeDown 0.35s ease both',
+            fadeUp:   'fadeUp 0.5s ease both',
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Shared helpers ───────────────────────── */
+    [class*="animate-"] { animation-fill-mode: both; }
+    .delay-100 { animation-delay: .10s; }
+    .delay-200 { animation-delay: .20s; }
+    .delay-300 { animation-delay: .30s; }
+    .delay-400 { animation-delay: .40s; }
+
+    /* ── Scroll progress bar ──────────────────── */
+    #scroll-progress {
+      position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+      background: #fdaf2e; z-index: 9999;
+      transition: width .1s linear;
+    }
+
+    /* ── Pattern nav (jump links) ─────────────── */
+    .pattern-nav a {
+      transition: color .2s, border-color .2s;
+    }
+
+    /* ── Nav link hover underline ─────────────── */
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 2px; background: #fdaf2e;
+      transition: width .25s ease;
+    }
+    .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+    /* ── Dropdown ─────────────────────────────── */
+    .dropdown-menu {
+      opacity: 0; pointer-events: none; transform: translateY(6px);
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .dropdown-trigger:hover .dropdown-menu,
+    .dropdown-trigger:focus-within .dropdown-menu {
+      opacity: 1; pointer-events: auto; transform: translateY(0);
+    }
+
+    /* ── Sidebar nav ──────────────────────────── */
+    .side-link { transition: background .15s, color .15s, border-color .15s; }
+    .side-link.active {
+      background: #002653;
+      color: #fff;
+      border-left: 3px solid #fdaf2e;
+    }
+    .side-link:not(.active):hover { background: rgba(0,38,83,.06); color: #002653; }
+
+    /* ── Mobile menu ──────────────────────────── */
+    #mobile-menu-1, #mobile-menu-2 {
+      max-height: 0; overflow: hidden; opacity: 0;
+      transition: max-height .3s ease, opacity .3s ease;
+    }
+
+    /* ── Buttons ──────────────────────────────── */
+    .btn-amber  { transition: background .2s, transform .15s, box-shadow .2s; }
+    .btn-amber:hover { background: #f9a010; transform: translateY(-1px); }
+    .btn-outline { transition: background .2s, color .2s, transform .15s; }
+    .btn-outline:hover { background: #002653; color: #fff; transform: translateY(-1px); }
+    .btn-ghost   { transition: background .2s, color .2s; }
+    .btn-ghost:hover  { background: rgba(0,38,83,.08); }
+
+    /* ── Footer newsletter input ──────────────── */
+    .nl-input:focus { outline: 2px solid #fdaf2e; outline-offset: 0; border-color: transparent; }
+
+    /* ── Pattern section dividers ─────────────── */
+    .pattern-section { border-top: 1px solid rgba(196,198,208,.25); }
+
+    /* ── Annotation chips ─────────────────────── */
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 700; letter-spacing: .6px;
+      text-transform: uppercase; padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    /* ── Sticky demo preview wrapper ─────────────*/
+    .demo-preview {
+      border: 1.5px dashed rgba(196,198,208,.5);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    /* ── Footer social hover ──────────────────── */
+    .social-btn { transition: background .2s, color .2s, transform .2s; }
+    .social-btn:hover { background: #002653; color: #fff; transform: scale(1.1); }
+
+    /* ── Footer link hover ────────────────────── */
+    .footer-link { transition: color .2s; }
+    .footer-link:hover { color: #002653; }
+
+    /* ── Scrollbar (webkit) ───────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f3f4f5; }
+    ::-webkit-scrollbar-thumb { background: #c4c6d0; border-radius: 99px; }
+
+    /* ── Print ────────────────────────────────── */
+    @media print { #scroll-progress, .no-print { display: none !important; } }
+  </style>
+</head>
+<body class="bg-brand-light font-sans text-brand-muted antialiased">
+
+  <!-- Scroll progress bar -->
+  <div id="scroll-progress" aria-hidden="true"></div>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       PATTERN NAVIGATOR (sticky top bar for this showcase page)
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="sticky top-0 z-[100] bg-brand-navy shadow-nav no-print">
+    <div class="max-w-[1280px] mx-auto px-4 sm:px-8 h-12 flex items-center gap-1 overflow-x-auto scrollbar-none">
+      <span class="text-white text-[11px] font-bold uppercase tracking-[.8px] mr-3 flex-shrink-0 opacity-60">Page 5 Patterns →</span>
+      <a href="#pattern-1" class="pattern-nav flex-shrink-0 text-white text-[12px] font-medium px-3 py-1 rounded hover:bg-white hover:bg-opacity-10 transition-colors">P1 · Desktop Nav</a>
+      <a href="#pattern-2" class="pattern-nav flex-shrink-0 text-white text-[12px] font-medium px-3 py-1 rounded hover:bg-white hover:bg-opacity-10 transition-colors">P2 · Transparent Nav</a>
+      <a href="#pattern-3" class="pattern-nav flex-shrink-0 text-white text-[12px] font-medium px-3 py-1 rounded hover:bg-white hover:bg-opacity-10 transition-colors">P3 · Sidebar (Dashboard)</a>
+      <a href="#pattern-4" class="pattern-nav flex-shrink-0 text-white text-[12px] font-medium px-3 py-1 rounded hover:bg-white hover:bg-opacity-10 transition-colors">P4 · Mobile App Bar</a>
+      <a href="#pattern-5" class="pattern-nav flex-shrink-0 text-white text-[12px] font-medium px-3 py-1 rounded hover:bg-white hover:bg-opacity-10 transition-colors">P5 · Footer 1 (Full)</a>
+      <a href="#pattern-6" class="pattern-nav flex-shrink-0 text-white text-[12px] font-medium px-3 py-1 rounded hover:bg-white hover:bg-opacity-10 transition-colors">P6 · Footer 2 (Compact)</a>
+      <a href="#pattern-7" class="pattern-nav flex-shrink-0 text-white text-[12px] font-medium px-3 py-1 rounded hover:bg-white hover:bg-opacity-10 transition-colors">P7 · Live Scroll Demo</a>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       PAGE HEADER
+  ═══════════════════════════════════════════════════════════ -->
+  <header class="bg-brand-light border-b border-brand-border px-4 sm:px-8 py-12 sm:py-16">
+    <div class="max-w-[1280px] mx-auto">
+      <div class="inline-flex items-center gap-2 bg-brand-navy text-white text-[11px] font-bold uppercase tracking-[.8px] px-3 py-1 rounded mb-5">
+        <span>Page 5</span>
+      </div>
+      <h1 class="text-brand-navy text-[32px] sm:text-[40px] font-bold tracking-[-1.5px] leading-tight mb-4">
+        Header &amp; Footer Patterns
+      </h1>
+      <p class="text-brand-muted text-[16px] sm:text-[18px] leading-relaxed max-w-[640px]">
+        The complete navigation &amp; footer system for StudyMate Central — sticky headers, transparent overlays,
+        sidebar shells, mobile app bars, and two footer variants. All responsive: desktop, tablet &amp; phone.
+      </p>
+      <!-- Feature chips -->
+      <div class="flex flex-wrap gap-2 mt-6">
+        <span class="chip bg-brand-green text-[#2d7a4f]">Sticky Headers</span>
+        <span class="chip bg-[#fff7e6] text-[#c47f00]">Tonal Layers</span>
+        <span class="chip bg-[#eef0ff] text-[#4459c8]">Dropdowns</span>
+        <span class="chip bg-brand-mid text-brand-navy">Side Nav</span>
+        <span class="chip bg-brand-navy text-white">Mobile Drawer</span>
+        <span class="chip bg-[#fdecea] text-[#c0392b]">Newsletter Form</span>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       PATTERN 1 — DESKTOP TOP NAVIGATION BAR (Primary / Light)
+  ═══════════════════════════════════════════════════════════ -->
+  <section id="pattern-1" class="pattern-section py-12 sm:py-16 px-4 sm:px-8">
+    <div class="max-w-[1280px] mx-auto">
+      <!-- Label -->
+      <div class="flex items-center gap-3 mb-6">
+        <span class="chip bg-brand-navy text-white">Pattern 1</span>
+        <h2 class="text-brand-navy text-[18px] font-semibold">Top Navigation Bar — Light (Sticky)</h2>
+      </div>
+      <p class="text-brand-muted text-[14px] mb-6 max-w-[640px]">
+        Primary site header. Sticky on scroll. Light background with navy text. Active state uses amber underline.
+        Includes cart badge, user avatar, and mega-dropdown on hover.
+      </p>
+
+      <!-- Demo -->
+      <div class="demo-preview">
+        <!-- ── HEADER PATTERN 1 ── -->
+        <nav id="nav-p1" class="bg-brand-light border-b border-brand-border transition-shadow duration-300" aria-label="Primary navigation">
+          <div class="max-w-[1280px] mx-auto px-4 sm:px-8 h-[80px] flex items-center justify-between gap-6">
+
+            <!-- Logo -->
+            <a href="#" class="flex-shrink-0 text-brand-navy text-[20px] sm:text-[24px] font-bold tracking-[-1.2px] leading-none hover:opacity-80 transition-opacity">
+              StudyMate Central
+            </a>
+
+            <!-- Desktop links + dropdown -->
+            <div class="hidden md:flex items-center gap-0">
+              <!-- Courses (with dropdown) -->
+              <div class="dropdown-trigger relative">
+                <a href="#" class="nav-link text-brand-muted text-[16px] tracking-[-0.4px] px-4 py-7 flex items-center gap-1 hover:text-brand-navy transition-colors">
+                  Courses
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </a>
+                <!-- Dropdown -->
+                <div class="dropdown-menu absolute top-full left-0 w-[280px] bg-white rounded-[10px] shadow-[0_12px_40px_rgba(0,38,83,0.12)] border border-brand-border py-2 z-50">
+                  <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-brand-light transition-colors group">
+                    <div class="w-8 h-8 rounded-[6px] bg-brand-green flex items-center justify-center flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#2d7a4f]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                    </div>
+                    <div>
+                      <p class="text-brand-navy text-[14px] font-semibold">Leadership &amp; Strategy</p>
+                      <p class="text-brand-muted text-[12px]">12 accredited programmes</p>
+                    </div>
+                  </a>
+                  <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-brand-light transition-colors">
+                    <div class="w-8 h-8 rounded-[6px] bg-[#fff7e6] flex items-center justify-center flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#c47f00]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5"/></svg>
+                    </div>
+                    <div>
+                      <p class="text-brand-navy text-[14px] font-semibold">Finance &amp; Accounting</p>
+                      <p class="text-brand-muted text-[12px]">8 accredited programmes</p>
+                    </div>
+                  </a>
+                  <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-brand-light transition-colors">
+                    <div class="w-8 h-8 rounded-[6px] bg-[#eef0ff] flex items-center justify-center flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#4459c8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 8.25h3m-3 4.5h3m-6-4.5H6m6 4.5H6"/></svg>
+                    </div>
+                    <div>
+                      <p class="text-brand-navy text-[14px] font-semibold">Data &amp; Analytics</p>
+                      <p class="text-brand-muted text-[12px]">6 accredited programmes</p>
+                    </div>
+                  </a>
+                  <div class="border-t border-brand-border mx-4 my-1"></div>
+                  <a href="#" class="flex items-center justify-between px-4 py-3 text-brand-navy text-[13px] font-semibold hover:bg-brand-light transition-colors">
+                    Browse all courses
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+                  </a>
+                </div>
+              </div>
+
+              <a href="#" class="nav-link active text-brand-navy text-[16px] font-semibold tracking-[-0.4px] px-4 py-7 border-b-2 border-brand-amber">My Learning</a>
+              <a href="#" class="nav-link text-brand-muted text-[16px] tracking-[-0.4px] px-4 py-7 hover:text-brand-navy transition-colors">Accreditation</a>
+              <a href="#" class="nav-link text-brand-muted text-[16px] tracking-[-0.4px] px-4 py-7 hover:text-brand-navy transition-colors">About</a>
+            </div>
+
+            <!-- Actions -->
+            <div class="hidden md:flex items-center gap-4">
+              <!-- Search -->
+              <button aria-label="Search" class="btn-ghost p-2 rounded-lg text-brand-muted hover:text-brand-navy">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+              </button>
+              <!-- Cart with badge -->
+              <button aria-label="Cart (2 items)" class="btn-ghost relative p-2 rounded-lg text-brand-muted hover:text-brand-navy">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9M9 21a1 1 0 100-2 1 1 0 000 2zm6 0a1 1 0 100-2 1 1 0 000 2z"/></svg>
+                <span class="absolute top-1 right-1 bg-brand-amber text-brand-navy text-[9px] font-black w-[14px] h-[14px] rounded-full flex items-center justify-center leading-none">2</span>
+              </button>
+              <!-- Avatar -->
+              <div class="dropdown-trigger relative">
+                <button class="w-9 h-9 rounded-full bg-brand-navy text-white text-[13px] font-bold flex items-center justify-center hover:bg-[#003070] transition-colors" aria-label="Account menu">AT</button>
+                <div class="dropdown-menu absolute top-full right-0 w-[200px] bg-white rounded-[10px] shadow-[0_12px_40px_rgba(0,38,83,0.12)] border border-brand-border py-2 z-50 mt-2">
+                  <div class="px-4 py-3 border-b border-brand-border">
+                    <p class="text-brand-navy text-[14px] font-semibold">Alex Thompson</p>
+                    <p class="text-brand-muted text-[12px]">alex.thompson@professional.uk</p>
+                  </div>
+                  <a href="#" class="block px-4 py-2.5 text-[14px] text-brand-muted hover:bg-brand-light hover:text-brand-navy transition-colors">My Dashboard</a>
+                  <a href="#" class="block px-4 py-2.5 text-[14px] text-brand-muted hover:bg-brand-light hover:text-brand-navy transition-colors">Settings</a>
+                  <div class="border-t border-brand-border my-1"></div>
+                  <a href="#" class="block px-4 py-2.5 text-[14px] text-brand-muted hover:bg-brand-light hover:text-brand-navy transition-colors">Sign Out</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hamburger -->
+            <button id="ham-1" aria-label="Toggle menu" class="md:hidden p-2 rounded-lg text-brand-muted hover:text-brand-navy hover:bg-brand-mid transition-colors">
+              <svg id="ham-1-open"  class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+              <svg id="ham-1-close" class="w-6 h-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <!-- Mobile drawer -->
+          <div id="mobile-menu-1" class="md:hidden border-t border-brand-border bg-white">
+            <div class="px-4 py-5 flex flex-col gap-1">
+              <a href="#" class="text-brand-muted text-[15px] font-medium py-2.5 px-3 rounded-lg hover:bg-brand-light hover:text-brand-navy transition-colors flex items-center justify-between">
+                Courses
+                <svg class="w-4 h-4 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+              </a>
+              <a href="#" class="text-brand-navy text-[15px] font-semibold py-2.5 px-3 rounded-lg bg-brand-light">My Learning</a>
+              <a href="#" class="text-brand-muted text-[15px] font-medium py-2.5 px-3 rounded-lg hover:bg-brand-light hover:text-brand-navy transition-colors">Accreditation</a>
+              <a href="#" class="text-brand-muted text-[15px] font-medium py-2.5 px-3 rounded-lg hover:bg-brand-light hover:text-brand-navy transition-colors">About</a>
+              <div class="border-t border-brand-border my-2"></div>
+              <div class="flex items-center gap-3 px-3 py-2">
+                <div class="w-9 h-9 rounded-full bg-brand-navy text-white text-[13px] font-bold flex items-center justify-center">AT</div>
+                <div>
+                  <p class="text-brand-navy text-[14px] font-semibold">Alex Thompson</p>
+                  <p class="text-brand-muted text-[12px]">My Dashboard</p>
+                </div>
+              </div>
+              <a href="#" class="btn-amber mt-3 bg-brand-amber text-brand-navy text-[15px] font-bold px-6 py-3 rounded-[8px] text-center">Start Learning</a>
+            </div>
+          </div>
+        </nav>
+        <!-- Demo body (placeholder) -->
+        <div class="bg-brand-light px-8 py-8 text-center">
+          <p class="text-brand-muted text-[13px] italic">↑ Sticky light header · Hover "Courses" for mega-dropdown · Click hamburger on mobile</p>
+        </div>
+      </div><!-- /demo -->
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       PATTERN 2 — TRANSPARENT / HERO-OVERLAY NAV
+  ═══════════════════════════════════════════════════════════ -->
+  <section id="pattern-2" class="pattern-section py-12 sm:py-16 px-4 sm:px-8 bg-brand-mid">
+    <div class="max-w-[1280px] mx-auto">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="chip bg-brand-navy text-white">Pattern 2</span>
+        <h2 class="text-brand-navy text-[18px] font-semibold">Transparent Hero Navigation (Marketing Pages)</h2>
+      </div>
+      <p class="text-brand-muted text-[14px] mb-6 max-w-[640px]">
+        Used on landing / marketing pages. Sits over a full-bleed hero image. Transitions to the solid header
+        on scroll (implemented via JS class toggle). White text on dark background.
+      </p>
+
+      <div class="demo-preview overflow-hidden">
+        <!-- Hero backdrop simulation -->
+        <div class="relative min-h-[200px] sm:min-h-[240px]"
+             style="background: linear-gradient(135deg, #002653 0%, #004499 50%, #003070 100%);">
+          <!-- Noise texture overlay -->
+          <div class="absolute inset-0 opacity-[0.04]"
+               style="background-image: url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\");">
+          </div>
+
+          <!-- Transparent nav -->
+          <nav class="relative z-10 px-4 sm:px-8 h-[80px] flex items-center justify-between max-w-[1280px] mx-auto">
+            <a href="#" class="text-white text-[20px] sm:text-[24px] font-bold tracking-[-1.2px]">StudyMate Central</a>
+            <div class="hidden md:flex items-center gap-8">
+              <a href="#" class="text-white text-opacity-75 text-[15px] hover:text-white transition-colors">Courses</a>
+              <a href="#" class="text-white text-[15px] font-semibold border-b-2 border-brand-amber pb-[2px]">Marketing</a>
+              <a href="#" class="text-white text-opacity-75 text-[15px] hover:text-white transition-colors">About</a>
+              <a href="#" class="text-white text-opacity-75 text-[15px] hover:text-white transition-colors">Contact</a>
+            </div>
+            <div class="hidden md:flex items-center gap-3">
+              <a href="#" class="text-white text-opacity-75 text-[15px] font-medium hover:text-white transition-colors">Sign In</a>
+              <a href="#" class="btn-amber bg-brand-amber text-brand-navy text-[14px] font-bold px-5 py-2.5 rounded-[8px] shadow-amber">Enrol Now</a>
+            </div>
+            <button class="md:hidden text-white p-2">
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+          </nav>
+
+          <!-- Hero text -->
+          <div class="relative z-10 px-4 sm:px-8 pb-10 max-w-[1280px] mx-auto">
+            <div class="inline-flex items-center gap-2 bg-white bg-opacity-10 text-white text-[11px] font-bold uppercase tracking-[.8px] px-3 py-1 rounded mb-4">
+              Academic Editorial Aesthetic
+            </div>
+            <h2 class="text-white text-[24px] sm:text-[32px] font-bold tracking-[-1px] leading-tight mb-2">
+              Block Pattern Showcase
+            </h2>
+            <p class="text-white text-opacity-70 text-[15px] max-w-[480px] leading-relaxed">
+              Experience the authoritative precision of StudyMate Central's UI architecture.
+            </p>
+          </div>
+        </div>
+        <div class="bg-white px-8 py-5 text-center border-t border-brand-border">
+          <p class="text-brand-muted text-[13px] italic">↑ Transparent nav overlays hero · On scroll → transitions to solid Pattern 1 header (see Pattern 7 demo)</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       PATTERN 3 — SIDEBAR NAVIGATION (Dashboard Shell)
+  ═══════════════════════════════════════════════════════════ -->
+  <section id="pattern-3" class="pattern-section py-12 sm:py-16 px-4 sm:px-8">
+    <div class="max-w-[1280px] mx-auto">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="chip bg-brand-navy text-white">Pattern 3</span>
+        <h2 class="text-brand-navy text-[18px] font-semibold">Sidebar Navigation — Desktop Dashboard Shell</h2>
+      </div>
+      <p class="text-brand-muted text-[14px] mb-6 max-w-[640px]">
+        Fixed left sidebar used in the Student Dashboard. Active state: amber left border + navy background.
+        Collapses to icon-only on narrow screens via a toggle. Includes a mini top-bar for the content area.
+      </p>
+
+      <div class="demo-preview min-h-[440px] flex">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="bg-brand-navy flex-shrink-0 w-[240px] flex flex-col transition-all duration-300">
+          <!-- Brand -->
+          <div class="px-5 h-[64px] flex items-center border-b border-white border-opacity-10">
+            <span class="text-white text-[18px] font-bold tracking-[-0.8px]">StudyMate</span>
+          </div>
+          <!-- Nav -->
+          <nav class="flex-1 py-4 overflow-y-auto" aria-label="Dashboard navigation">
+            <div class="px-3 mb-2">
+              <p class="text-white text-opacity-40 text-[10px] font-bold uppercase tracking-[.8px] px-2 mb-1">Main</p>
+              <a href="#" class="side-link active flex items-center gap-3 px-3 py-2.5 rounded-[6px] text-[14px] font-semibold">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span>Dashboard</span>
+              </a>
+              <a href="#" class="side-link text-white text-opacity-70 flex items-center gap-3 px-3 py-2.5 rounded-[6px] text-[14px] font-medium mt-0.5">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                <span>My Courses</span>
+              </a>
+              <a href="#" class="side-link text-white text-opacity-70 flex items-center gap-3 px-3 py-2.5 rounded-[6px] text-[14px] font-medium mt-0.5">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/></svg>
+                <span>Certificates</span>
+                <span class="ml-auto bg-brand-amber text-brand-navy text-[10px] font-black px-1.5 py-0.5 rounded">2</span>
+              </a>
+              <a href="#" class="side-link text-white text-opacity-70 flex items-center gap-3 px-3 py-2.5 rounded-[6px] text-[14px] font-medium mt-0.5">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
+                <span>Schedule</span>
+              </a>
+            </div>
+            <div class="px-3 mt-4">
+              <p class="text-white text-opacity-40 text-[10px] font-bold uppercase tracking-[.8px] px-2 mb-1">Account</p>
+              <a href="#" class="side-link text-white text-opacity-70 flex items-center gap-3 px-3 py-2.5 rounded-[6px] text-[14px] font-medium mt-0.5">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                <span>Profile</span>
+              </a>
+              <a href="#" class="side-link text-white text-opacity-70 flex items-center gap-3 px-3 py-2.5 rounded-[6px] text-[14px] font-medium mt-0.5">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span>Settings</span>
+              </a>
+            </div>
+          </nav>
+          <!-- User footer -->
+          <div class="border-t border-white border-opacity-10 px-4 py-3 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-brand-amber text-brand-navy text-[12px] font-bold flex items-center justify-center flex-shrink-0">AT</div>
+            <div class="min-w-0">
+              <p class="text-white text-[13px] font-semibold truncate">Alex Thompson</p>
+              <p class="text-white text-opacity-50 text-[11px] truncate">Pro Plan</p>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Content shell -->
+        <div class="flex-1 flex flex-col min-w-0">
+          <!-- Mini top-bar -->
+          <div class="bg-white border-b border-brand-border h-[64px] px-5 flex items-center justify-between flex-shrink-0">
+            <div class="flex items-center gap-3">
+              <button id="sidebar-toggle" aria-label="Toggle sidebar" class="btn-ghost p-1.5 rounded text-brand-muted hover:text-brand-navy">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+              </button>
+              <!-- Breadcrumb -->
+              <nav class="flex items-center gap-1 text-[13px]">
+                <a href="#" class="text-brand-muted hover:text-brand-navy transition-colors">Home</a>
+                <span class="text-brand-muted opacity-40 mx-1">/</span>
+                <span class="text-brand-navy font-medium">Dashboard</span>
+              </nav>
+            </div>
+            <div class="flex items-center gap-3">
+              <button class="btn-ghost p-1.5 rounded text-brand-muted hover:text-brand-navy">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg>
+              </button>
+            </div>
+          </div>
+          <!-- Placeholder content -->
+          <div class="flex-1 bg-brand-light p-6 flex items-center justify-center">
+            <p class="text-brand-muted text-[13px] italic text-center">↑ Sidebar with active-state nav · Click ☰ top-left to collapse/expand</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       PATTERN 4 — MOBILE APP BAR + BOTTOM TAB BAR
+  ═══════════════════════════════════════════════════════════ -->
+  <section id="pattern-4" class="pattern-section py-12 sm:py-16 px-4 sm:px-8 bg-brand-mid">
+    <div class="max-w-[1280px] mx-auto">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="chip bg-brand-navy text-white">Pattern 4</span>
+        <h2 class="text-brand-navy text-[18px] font-semibold">Mobile Navigation — Top App Bar &amp; Bottom Tab Bar</h2>
+      </div>
+      <p class="text-brand-muted text-[14px] mb-8 max-w-[640px]">
+        Phone-specific navigation shell. Top app bar for contextual back/title/actions.
+        Persistent bottom tab bar for primary navigation (replaces the hamburger menu pattern for native-feeling mobile UX).
+      </p>
+
+      <!-- Two phone frames side by side -->
+      <div class="flex flex-wrap gap-8 justify-start">
+
+        <!-- Phone 1: Top App Bar -->
+        <div>
+          <p class="text-brand-navy text-[13px] font-semibold mb-3">Top App Bar (Course Detail context)</p>
+          <div class="w-[320px] bg-white rounded-[20px] overflow-hidden shadow-[0_8px_40px_rgba(0,38,83,0.12)] border border-brand-border">
+            <!-- Status bar simulation -->
+            <div class="bg-brand-navy px-4 py-1.5 flex items-center justify-between">
+              <span class="text-white text-[11px] font-semibold">9:41</span>
+              <div class="flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M1.5 8.75C4.03 6.22 7.35 4.75 12 4.75s7.97 1.47 10.5 4l-1.5 1.5C18.8 8 15.65 6.75 12 6.75S5.2 8 3 10.25L1.5 8.75z"/><circle cx="12" cy="17.25" r="2"/></svg>
+                <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+              </div>
+            </div>
+            <!-- App bar -->
+            <div class="bg-brand-light border-b border-brand-border h-[56px] px-4 flex items-center gap-3">
+              <button class="text-brand-navy p-1 -ml-1">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+              </button>
+              <span class="text-brand-navy text-[15px] font-semibold flex-1 truncate">Advanced Leadership</span>
+              <button class="text-brand-muted">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm6 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm6 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/></svg>
+              </button>
+            </div>
+            <!-- Placeholder content -->
+            <div class="bg-brand-light h-[260px] px-4 py-4">
+              <div class="h-3 bg-brand-border-solid bg-opacity-30 rounded w-3/4 mb-3"></div>
+              <div class="h-3 bg-brand-border-solid bg-opacity-30 rounded w-full mb-3"></div>
+              <div class="h-3 bg-brand-border-solid bg-opacity-30 rounded w-5/6 mb-3"></div>
+              <div class="h-20 bg-brand-border-solid bg-opacity-20 rounded-lg mt-4"></div>
+            </div>
+            <!-- Bottom tab bar -->
+            <div class="bg-white border-t border-brand-border h-[60px] px-2 flex items-center">
+              <a href="#" class="flex-1 flex flex-col items-center gap-0.5 py-1">
+                <svg class="w-5 h-5 text-brand-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span class="text-[9px] text-brand-muted">Home</span>
+              </a>
+              <a href="#" class="flex-1 flex flex-col items-center gap-0.5 py-1">
+                <svg class="w-5 h-5 text-brand-navy" fill="currentColor" viewBox="0 0 24 24"><path d="M11.25 4.533A9.707 9.707 0 006 3a9.735 9.735 0 00-3.25.555.75.75 0 00-.5.707v14.25a.75.75 0 001 .707A8.237 8.237 0 016 18.75c1.995 0 3.823.707 5.25 1.886V4.533zM12.75 20.636A8.214 8.214 0 0118 18.75c.966 0 1.89.166 2.75.47a.75.75 0 001-.708V4.262a.75.75 0 00-.5-.707A9.735 9.735 0 0018 3a9.707 9.707 0 00-5.25 1.533v16.103z"/></svg>
+                <span class="text-[9px] text-brand-navy font-semibold">Courses</span>
+                <div class="absolute bottom-0 h-[2px] w-6 bg-brand-amber rounded-t"></div>
+              </a>
+              <a href="#" class="flex-1 flex flex-col items-center gap-0.5 py-1 relative">
+                <div class="relative">
+                  <svg class="w-5 h-5 text-brand-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9M9 21a1 1 0 100-2 1 1 0 000 2zm6 0a1 1 0 100-2 1 1 0 000 2z"/></svg>
+                  <span class="absolute -top-1 -right-1.5 bg-brand-amber text-brand-navy text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center">2</span>
+                </div>
+                <span class="text-[9px] text-brand-muted">Cart</span>
+              </a>
+              <a href="#" class="flex-1 flex flex-col items-center gap-0.5 py-1">
+                <svg class="w-5 h-5 text-brand-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                <span class="text-[9px] text-brand-muted">Profile</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phone 2: Hamburger drawer (phone version of P1) -->
+        <div>
+          <p class="text-brand-navy text-[13px] font-semibold mb-3">Mobile Drawer (open state)</p>
+          <div class="w-[320px] bg-white rounded-[20px] overflow-hidden shadow-[0_8px_40px_rgba(0,38,83,0.12)] border border-brand-border">
+            <div class="bg-brand-navy px-4 py-1.5 flex items-center justify-between">
+              <span class="text-white text-[11px] font-semibold">9:41</span>
+              <div class="flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M1.5 8.75C4.03 6.22 7.35 4.75 12 4.75s7.97 1.47 10.5 4l-1.5 1.5C18.8 8 15.65 6.75 12 6.75S5.2 8 3 10.25L1.5 8.75z"/><circle cx="12" cy="17.25" r="2"/></svg>
+                <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+              </div>
+            </div>
+            <div class="bg-brand-light border-b border-brand-border h-[56px] px-4 flex items-center justify-between">
+              <span class="text-brand-navy text-[16px] font-bold tracking-tight">StudyMate Central</span>
+              <button class="text-brand-navy">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <!-- Open drawer -->
+            <div class="bg-white px-3 py-4 flex flex-col gap-0.5">
+              <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-brand-muted text-[14px] font-medium hover:bg-brand-light">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                Courses
+              </a>
+              <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-brand-navy text-white text-[14px] font-semibold">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                My Learning
+                <span class="ml-auto w-1.5 h-1.5 rounded-full bg-brand-amber"></span>
+              </a>
+              <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-brand-muted text-[14px] font-medium hover:bg-brand-light">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/></svg>
+                Accreditation
+              </a>
+              <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-brand-muted text-[14px] font-medium hover:bg-brand-light">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
+                About
+              </a>
+              <div class="border-t border-brand-border my-2"></div>
+              <a href="#" class="btn-amber bg-brand-amber text-brand-navy text-[14px] font-bold px-6 py-3 rounded-[8px] text-center">Enrol Now</a>
+              <a href="#" class="text-brand-navy text-[14px] font-medium px-6 py-3 rounded-[8px] text-center border-2 border-brand-navy mt-1">Sign In</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       PATTERN 5 — FOOTER (Full / 4-Column)
+  ═══════════════════════════════════════════════════════════ -->
+  <section id="pattern-5" class="pattern-section py-12 sm:py-16 px-4 sm:px-8">
+    <div class="max-w-[1280px] mx-auto">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="chip bg-brand-navy text-white">Pattern 5</span>
+        <h2 class="text-brand-navy text-[18px] font-semibold">Footer — Full (4-Column with Newsletter)</h2>
+      </div>
+      <p class="text-brand-muted text-[14px] mb-6 max-w-[640px]">
+        Primary site footer. Light background. 4 columns: brand identity, quick links, support, and a newsletter
+        signup form. Bottom bar includes copyright + legal links. Stacks to 2-col on tablet, 1-col on mobile.
+      </p>
+    </div>
+
+    <!-- ── FOOTER PATTERN 1 (live, full-width) ── -->
+    <footer class="bg-brand-light border-t border-brand-border">
+      <div class="max-w-[1280px] mx-auto px-4 sm:px-8 py-12 sm:py-16">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
+
+          <!-- Col 1: Identity -->
+          <div class="sm:col-span-2 md:col-span-1">
+            <a href="#" class="text-brand-navy text-[20px] font-bold tracking-[-1px] block mb-3">StudyMate Central</a>
+            <p class="text-brand-muted text-[14px] leading-relaxed mb-5">
+              Delivering world-class professional education across the United Kingdom through rigorous curriculum design.
+            </p>
+            <!-- Accreditation badge -->
+            <div class="inline-flex items-center gap-2 bg-brand-green text-[#2d7a4f] text-[11px] font-bold px-3 py-1.5 rounded-[6px] mb-5">
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.491 4.491 0 01-3.497-1.307 4.491 4.491 0 01-1.307-3.497A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd"/></svg>
+              ATHE Accredited
+            </div>
+            <!-- Social -->
+            <div class="flex gap-2.5">
+              <a href="#" aria-label="LinkedIn" class="social-btn w-8 h-8 rounded-full bg-brand-navy bg-opacity-10 flex items-center justify-center text-brand-navy">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              </a>
+              <a href="#" aria-label="Twitter/X" class="social-btn w-8 h-8 rounded-full bg-brand-navy bg-opacity-10 flex items-center justify-center text-brand-navy">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              </a>
+              <a href="#" aria-label="YouTube" class="social-btn w-8 h-8 rounded-full bg-brand-navy bg-opacity-10 flex items-center justify-center text-brand-navy">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Col 2: Quick Links -->
+          <div>
+            <h3 class="text-brand-navy text-[12px] font-bold uppercase tracking-[.8px] mb-5">Quick Links</h3>
+            <ul class="flex flex-col gap-3">
+              <li><a href="#" class="footer-link text-brand-muted text-[14px]">Course Catalogue</a></li>
+              <li><a href="#" class="footer-link text-brand-muted text-[14px]">Accreditation Partners</a></li>
+              <li><a href="#" class="footer-link text-brand-muted text-[14px]">Corporate Training</a></li>
+              <li><a href="#" class="footer-link text-brand-muted text-[14px]">Instructors</a></li>
+              <li><a href="#" class="footer-link text-brand-muted text-[14px]">Student Stories</a></li>
+            </ul>
+          </div>
+
+          <!-- Col 3: Support -->
+          <div>
+            <h3 class="text-brand-navy text-[12px] font-bold uppercase tracking-[.8px] mb-5">Support</h3>
+            <ul class="flex flex-col gap-3">
+              <li><a href="#" class="footer-link text-brand-muted text-[14px]">Help Centre</a></li>
+              <li><a href="#" class="footer-link text-brand-muted text-[14px]">Student Portal</a></li>
+              <li><a href="#" class="footer-link text-brand-muted text-[14px]">Contact Us</a></li>
+              <li><a href="#" class="footer-link text-brand-muted text-[14px]">Refund Policy</a></li>
+              <li><a href="#" class="footer-link text-brand-muted text-[14px]">Accessibility</a></li>
+            </ul>
+          </div>
+
+          <!-- Col 4: Newsletter -->
+          <div>
+            <h3 class="text-brand-navy text-[12px] font-bold uppercase tracking-[.8px] mb-5">Stay Updated</h3>
+            <p class="text-brand-muted text-[14px] leading-relaxed mb-4">
+              New courses, career insights, and exclusive offers — direct to your inbox.
+            </p>
+            <form class="flex flex-col gap-3" onsubmit="handleNL(event, this)">
+              <input
+                type="email"
+                placeholder="Email address"
+                required
+                class="nl-input bg-white border border-brand-border-solid rounded-[6px] px-4 py-2.5 text-[14px] text-brand-navy placeholder:text-brand-muted w-full"
+              />
+              <button type="submit" class="btn-amber bg-brand-amber text-brand-navy text-[14px] font-bold py-2.5 rounded-[6px] w-full shadow-amber">
+                Subscribe
+              </button>
+              <p class="text-brand-muted text-[11px]">No spam. Unsubscribe anytime.</p>
+            </form>
+          </div>
+
+        </div>
+
+        <!-- Bottom bar -->
+        <div class="mt-12 pt-6 border-t border-brand-border flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p class="text-brand-muted text-[13px]">© <span class="footer-year"></span> StudyMate Central Ltd. All rights reserved.</p>
+          <div class="flex items-center gap-5">
+            <a href="#" class="footer-link text-brand-muted text-[13px]">Privacy Policy</a>
+            <a href="#" class="footer-link text-brand-muted text-[13px]">Terms of Service</a>
+            <a href="#" class="footer-link text-brand-muted text-[13px]">Cookie Settings</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       PATTERN 6 — FOOTER (Compact / Dark)
+  ═══════════════════════════════════════════════════════════ -->
+  <section id="pattern-6" class="pattern-section py-12 sm:py-16 px-4 sm:px-8 bg-brand-mid">
+    <div class="max-w-[1280px] mx-auto">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="chip bg-brand-navy text-white">Pattern 6</span>
+        <h2 class="text-brand-navy text-[18px] font-semibold">Footer — Compact (Dark, 2-Column)</h2>
+      </div>
+      <p class="text-brand-muted text-[14px] mb-6 max-w-[640px]">
+        Compact dark footer used on checkout and confirmation pages where a lighter footprint is needed.
+        Navy background, amber brand accent, single-row bottom bar.
+      </p>
+    </div>
+
+    <!-- ── FOOTER PATTERN 2 (live, full-width) ── -->
+    <footer class="bg-brand-navy">
+      <div class="max-w-[1280px] mx-auto px-4 sm:px-8 py-10 sm:py-12">
+        <div class="flex flex-col sm:flex-row items-start justify-between gap-10">
+          <!-- Brand side -->
+          <div class="max-w-[300px]">
+            <a href="#" class="text-white text-[20px] font-bold tracking-[-1px] block mb-3">StudyMate Central</a>
+            <p class="text-white text-opacity-60 text-[14px] leading-relaxed mb-5">
+              Empowering UK professionals since 2020. Gold-standard educational resources for career progression.
+            </p>
+            <div class="flex gap-2.5">
+              <a href="#" aria-label="LinkedIn" class="social-btn w-8 h-8 rounded-full bg-white bg-opacity-10 flex items-center justify-center text-white">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              </a>
+              <a href="#" aria-label="Twitter/X" class="social-btn w-8 h-8 rounded-full bg-white bg-opacity-10 flex items-center justify-center text-white">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              </a>
+            </div>
+          </div>
+          <!-- Links side -->
+          <div class="flex flex-wrap gap-10 sm:gap-14">
+            <div>
+              <h3 class="text-white text-[11px] font-bold uppercase tracking-[.8px] mb-4 opacity-50">Learn</h3>
+              <ul class="flex flex-col gap-2.5">
+                <li><a href="#" class="text-white text-opacity-60 text-[14px] hover:text-white transition-colors">All Courses</a></li>
+                <li><a href="#" class="text-white text-opacity-60 text-[14px] hover:text-white transition-colors">Accreditation</a></li>
+                <li><a href="#" class="text-white text-opacity-60 text-[14px] hover:text-white transition-colors">Instructors</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-white text-[11px] font-bold uppercase tracking-[.8px] mb-4 opacity-50">Company</h3>
+              <ul class="flex flex-col gap-2.5">
+                <li><a href="#" class="text-white text-opacity-60 text-[14px] hover:text-white transition-colors">About</a></li>
+                <li><a href="#" class="text-white text-opacity-60 text-[14px] hover:text-white transition-colors">Careers</a></li>
+                <li><a href="#" class="text-white text-opacity-60 text-[14px] hover:text-white transition-colors">Contact</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-white text-[11px] font-bold uppercase tracking-[.8px] mb-4 opacity-50">Legal</h3>
+              <ul class="flex flex-col gap-2.5">
+                <li><a href="#" class="text-white text-opacity-60 text-[14px] hover:text-white transition-colors">Privacy</a></li>
+                <li><a href="#" class="text-white text-opacity-60 text-[14px] hover:text-white transition-colors">Terms</a></li>
+                <li><a href="#" class="text-white text-opacity-60 text-[14px] hover:text-white transition-colors">Cookies</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <!-- Bottom bar -->
+        <div class="mt-10 pt-6 border-t border-white border-opacity-10 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p class="text-white text-opacity-40 text-[13px]">© <span class="footer-year"></span> StudyMate Central Ltd. Registered in England &amp; Wales · No. 12345678</p>
+          <div class="flex items-center gap-2">
+            <!-- Stripe trust badge simulation -->
+            <div class="flex items-center gap-2 bg-white bg-opacity-5 border border-white border-opacity-10 rounded-[5px] px-2.5 py-1">
+              <svg class="w-4 h-4 text-white opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+              <span class="text-white text-opacity-50 text-[11px] font-medium">Secure Payments</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       PATTERN 7 — LIVE SCROLL DEMO (Transparent → Solid)
+  ═══════════════════════════════════════════════════════════ -->
+  <section id="pattern-7" class="pattern-section py-12 sm:py-16 px-4 sm:px-8">
+    <div class="max-w-[1280px] mx-auto">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="chip bg-brand-navy text-white">Pattern 7</span>
+        <h2 class="text-brand-navy text-[18px] font-semibold">Live Scroll Demo — Transparent → Solid Transition</h2>
+      </div>
+      <p class="text-brand-muted text-[14px] mb-8 max-w-[640px]">
+        Scroll down within the frame below to see the hero nav transition from transparent to the solid sticky state.
+        The page progress bar at the very top of this showcase page uses the same technique.
+      </p>
+
+      <!-- Scrollable iframe-like frame -->
+      <div class="demo-preview h-[420px] overflow-y-auto relative" id="scroll-demo-container">
+        <!-- Scroll demo header (floats over hero) -->
+        <div id="scroll-demo-header" class="sticky top-0 z-20 transition-all duration-300 px-6 h-[64px] flex items-center justify-between"
+             style="background: transparent;">
+          <span id="sd-logo" class="text-white text-[18px] font-bold tracking-tight transition-colors duration-300">StudyMate Central</span>
+          <div class="hidden sm:flex items-center gap-6">
+            <a href="#" id="sd-link1" class="text-white text-opacity-80 text-[14px] transition-colors duration-300">Courses</a>
+            <a href="#" id="sd-link2" class="text-white text-[14px] font-semibold border-b-2 border-brand-amber pb-[2px] transition-colors duration-300">My Learning</a>
+            <a href="#" id="sd-link3" class="text-white text-opacity-80 text-[14px] transition-colors duration-300">About</a>
+          </div>
+          <a href="#" id="sd-cta" class="btn-amber bg-brand-amber text-brand-navy text-[13px] font-bold px-4 py-2 rounded-[7px] shadow-amber">Enrol Now</a>
+        </div>
+
+        <!-- Hero -->
+        <div class="relative -mt-[64px]" style="background: linear-gradient(135deg, #002653 0%, #004499 50%, #003070 100%); min-height: 300px;">
+          <div class="pt-[96px] pb-[60px] px-6 max-w-[600px]">
+            <div class="inline-flex bg-white bg-opacity-10 text-white text-[11px] font-bold uppercase tracking-[.8px] px-3 py-1 rounded mb-4">Scroll this frame ↓</div>
+            <h2 class="text-white text-[26px] sm:text-[32px] font-bold tracking-[-1px] leading-tight mb-3">Block Pattern Showcase</h2>
+            <p class="text-white text-opacity-70 text-[15px] leading-relaxed">Scroll down to see the header transition from transparent to solid.</p>
+          </div>
+        </div>
+
+        <!-- Body content -->
+        <div class="bg-brand-light px-6 py-12">
+          <h3 class="text-brand-navy text-[22px] font-semibold mb-4">Built for Professionals</h3>
+          <p class="text-brand-muted text-[15px] leading-relaxed mb-4 max-w-[560px]">
+            Our programmes are designed for working adults who need flexibility without sacrificing quality.
+            Every module is delivered by industry practitioners with real-world experience.
+          </p>
+          <ul class="flex flex-col gap-3 mb-8">
+            <li class="flex items-center gap-3 text-brand-muted text-[15px]">
+              <svg class="w-5 h-5 text-[#2d7a4f] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+              Internationally recognised ATHE accreditation
+            </li>
+            <li class="flex items-center gap-3 text-brand-muted text-[15px]">
+              <svg class="w-5 h-5 text-[#2d7a4f] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+              Live weekly sessions with recorded access
+            </li>
+            <li class="flex items-center gap-3 text-brand-muted text-[15px]">
+              <svg class="w-5 h-5 text-[#2d7a4f] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+              Dedicated learner support Mon–Fri 9am–6pm
+            </li>
+          </ul>
+          <p class="text-brand-muted text-[13px] italic">← The header above is now solid. Scroll back to top to see it go transparent again.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       JAVASCRIPT
+  ═══════════════════════════════════════════════════════════ -->
+  <script>
+    // ── Scroll progress (main page) ────────────────────────
+    const progressBar = document.getElementById('scroll-progress');
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement;
+      const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      progressBar.style.width = pct + '%';
+    }, { passive: true });
+
+    // ── Footer years ───────────────────────────────────────
+    document.querySelectorAll('.footer-year').forEach(el => {
+      el.textContent = new Date().getFullYear();
+    });
+
+    // ── Pattern 1 hamburger ────────────────────────────────
+    const ham1       = document.getElementById('ham-1');
+    const menu1      = document.getElementById('mobile-menu-1');
+    const hamOpen1   = document.getElementById('ham-1-open');
+    const hamClose1  = document.getElementById('ham-1-close');
+    let open1 = false;
+    ham1.addEventListener('click', () => {
+      open1 = !open1;
+      menu1.style.maxHeight  = open1 ? menu1.scrollHeight + 'px' : '0';
+      menu1.style.opacity    = open1 ? '1' : '0';
+      hamOpen1.classList.toggle('hidden', open1);
+      hamClose1.classList.toggle('hidden', !open1);
+    });
+
+    // ── Sidebar toggle (Pattern 3) ─────────────────────────
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebar       = document.getElementById('sidebar');
+    let sidebarOpen = true;
+    sidebarToggle.addEventListener('click', () => {
+      sidebarOpen = !sidebarOpen;
+      sidebar.style.width = sidebarOpen ? '240px' : '0px';
+      sidebar.style.overflow = sidebarOpen ? '' : 'hidden';
+    });
+
+    // ── Pattern 7 scroll demo ──────────────────────────────
+    const demoContainer  = document.getElementById('scroll-demo-container');
+    const demoHeader     = document.getElementById('scroll-demo-header');
+    const sdLogo         = document.getElementById('sd-logo');
+    const sdLinks        = [document.getElementById('sd-link1'), document.getElementById('sd-link2'), document.getElementById('sd-link3')];
+    const THRESHOLD      = 60;
+
+    demoContainer.addEventListener('scroll', () => {
+      const scrolled = demoContainer.scrollTop > THRESHOLD;
+      if (scrolled) {
+        demoHeader.style.background    = 'rgba(248,249,250,0.97)';
+        demoHeader.style.boxShadow     = '0 2px 16px rgba(26,60,110,0.08)';
+        demoHeader.style.backdropFilter = 'blur(12px)';
+        sdLogo.style.color             = '#002653';
+        sdLinks.forEach(l => l.style.color = '#43474f');
+      } else {
+        demoHeader.style.background    = 'transparent';
+        demoHeader.style.boxShadow     = 'none';
+        demoHeader.style.backdropFilter = 'none';
+        sdLogo.style.color             = '#fff';
+        sdLinks.forEach(l => { l.style.color = ''; l.style.opacity = ''; });
+      }
+    }, { passive: true });
+
+    // ── Newsletter handler ─────────────────────────────────
+    function handleNL(e, form) {
+      e.preventDefault();
+      const btn = form.querySelector('button[type="submit"]');
+      btn.textContent = '✓ Subscribed!';
+      btn.disabled = true;
+      btn.style.background = '#e8f4ec';
+      btn.style.color = '#2d7a4f';
+      setTimeout(() => {
+        btn.textContent = 'Subscribe';
+        btn.disabled = false;
+        btn.style.background = '';
+        btn.style.color = '';
+        form.reset();
+      }, 3000);
+    }
+
+    // ── Pattern nav active highlight on scroll ─────────────
+    const sections = document.querySelectorAll('section[id]');
+    const patternLinks = document.querySelectorAll('.pattern-nav a');
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = '#' + entry.target.id;
+          patternLinks.forEach(a => {
+            a.classList.toggle('bg-white', a.getAttribute('href') === id);
+            a.classList.toggle('bg-opacity-10', a.getAttribute('href') === id);
+          });
+        }
+      });
+    }, { threshold: 0.4 });
+    sections.forEach(s => io.observe(s));
+  </script>
+
+</body>
+</html>

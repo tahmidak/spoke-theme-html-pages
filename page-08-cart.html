@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Learning Basket – StudyMate Central</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { inter: ['Inter', 'sans-serif'] },
+          colors: {
+            navy:   '#002653',
+            amber:  '#fdaf2e',
+            'amber-dark': '#f4a726',
+            'amber-text': '#6b4500',
+            slate:  { body: '#43474f', muted: '#6b7280', border: '#e7e8e9', bg: '#f3f4f5', light: '#f8f9fa' },
+            green:  { accent: '#e8f4ec' },
+          },
+          boxShadow: {
+            card:    '0 8px 32px 0 rgba(26,60,110,0.04)',
+            header:  '0 1px 2px 0 rgba(0,0,0,0.05)',
+            checkout:'0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)',
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+
+    /* Smooth transitions */
+    .cart-item  { transition: opacity .3s, transform .3s; }
+    .cart-item.removing { opacity: 0; transform: translateX(40px); pointer-events: none; }
+
+    /* Promo input focus */
+    input:focus { outline: 2px solid #fdaf2e; outline-offset: 1px; }
+
+    /* Button hover states */
+    .btn-checkout:hover  { filter: brightness(1.06); }
+    .btn-navy:hover      { filter: brightness(1.12); }
+    .btn-remove:hover    { background: #fee2e2; }
+
+    /* Mobile nav */
+    #mobile-menu { display: none; }
+    #mobile-menu.open { display: flex; }
+
+    /* Coupon success */
+    #promo-success { display: none; }
+    #promo-success.show { display: flex; }
+
+    /* Toast */
+    #toast {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      background: #002653; color: #fff;
+      padding: .75rem 1.25rem; border-radius: .5rem;
+      font-size: .875rem; font-weight: 600;
+      transform: translateY(120%); opacity: 0;
+      transition: transform .3s, opacity .3s;
+      z-index: 100;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+  </style>
+</head>
+
+<body class="bg-slate-light text-navy font-inter antialiased min-h-screen">
+
+<!-- ═══════════════════════════════════
+     HEADER / TOP NAV
+═══════════════════════════════════ -->
+<header class="sticky top-0 z-50 bg-slate-light shadow-header">
+  <div class="max-w-[1280px] mx-auto px-6 lg:px-8 flex h-20 items-center justify-between">
+
+    <!-- Logo -->
+    <a href="#" class="font-bold text-navy text-2xl tracking-[-1.2px] shrink-0">StudyMate Central</a>
+
+    <!-- Desktop nav links -->
+    <nav class="hidden md:flex items-center gap-8">
+      <a href="#" class="text-slate-body font-medium text-base hover:text-navy transition">Courses</a>
+      <a href="#" class="text-slate-body font-medium text-base hover:text-navy transition">My Learning</a>
+      <a href="#" class="text-slate-body font-medium text-base hover:text-navy transition">Resources</a>
+    </nav>
+
+    <!-- Right actions -->
+    <div class="flex items-center gap-1">
+      <!-- Cart icon with badge -->
+      <button id="cart-btn" class="relative p-2 rounded hover:bg-slate-bg transition" aria-label="Cart">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 20 20" stroke="#002653" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.5 2.5h1.667l2.083 9.167h9.167l1.666-6.25H6.25"/>
+          <circle cx="8.333" cy="14.167" r="1.25" fill="#002653" stroke="none"/>
+          <circle cx="14.167" cy="14.167" r="1.25" fill="#002653" stroke="none"/>
+        </svg>
+        <span id="cart-badge" class="absolute top-1 right-1 bg-amber text-amber-text text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">2</span>
+      </button>
+
+      <!-- User icon -->
+      <button class="p-2 rounded hover:bg-slate-bg transition ml-4 md:ml-6" aria-label="Account">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 20 20" stroke="#002653" stroke-width="1.5">
+          <circle cx="10" cy="6.667" r="3.333"/>
+          <path stroke-linecap="round" d="M3.333 17.5c0-3.682 2.985-6.667 6.667-6.667s6.667 2.985 6.667 6.667"/>
+        </svg>
+      </button>
+
+      <!-- Hamburger (mobile) -->
+      <button id="hamburger" class="md:hidden p-2 rounded hover:bg-slate-bg transition ml-2" aria-label="Menu">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="md:hidden flex-col bg-white border-t border-slate-border px-6 pb-4">
+    <a href="#" class="py-3 text-slate-body font-medium border-b border-slate-border/50 block">Courses</a>
+    <a href="#" class="py-3 text-slate-body font-medium border-b border-slate-border/50 block">My Learning</a>
+    <a href="#" class="py-3 text-slate-body font-medium block">Resources</a>
+  </div>
+</header>
+
+
+<!-- ═══════════════════════════════════
+     MAIN CONTENT
+═══════════════════════════════════ -->
+<main class="max-w-[1280px] mx-auto px-6 lg:px-8 py-16 flex flex-col gap-12">
+
+  <!-- Page Title -->
+  <div class="flex flex-col gap-4">
+    <h1 class="text-navy font-bold text-[clamp(32px,5vw,48px)] tracking-[-1.2px] leading-tight">
+      Your Learning Basket
+    </h1>
+    <p class="text-slate-body text-lg leading-[1.6] max-w-2xl">
+      Review your selected professional certifications and prepare for your next career milestone.
+    </p>
+  </div>
+
+  <!-- Cart Grid: items (left) + summary (right) -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+
+    <!-- ── CART ITEMS (8 cols desktop) ── -->
+    <div class="lg:col-span-8 flex flex-col gap-6">
+
+      <!-- Empty cart state (hidden by default) -->
+      <div id="empty-cart" class="hidden bg-white rounded-lg shadow-card p-12 flex flex-col items-center gap-4 text-center">
+        <svg class="w-16 h-16 text-slate-border" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/>
+        </svg>
+        <h2 class="text-navy font-bold text-2xl">Your basket is empty</h2>
+        <p class="text-slate-body text-base max-w-xs">Add some professional courses to continue your learning journey.</p>
+        <a href="#" class="mt-2 bg-amber text-amber-text font-bold px-8 py-3 rounded-lg btn-checkout transition">Browse Courses</a>
+      </div>
+
+      <!-- Cart items list -->
+      <div id="cart-items-list" class="flex flex-col gap-6">
+
+        <!-- Course Item 1 -->
+        <article id="item-1" class="cart-item bg-white rounded-lg shadow-card p-6 flex flex-col sm:flex-row items-start sm:items-center gap-6">
+          <!-- Thumbnail -->
+          <div class="w-full sm:w-32 h-24 rounded overflow-hidden flex-shrink-0 border border-black/5 shadow-sm">
+            <img
+              src="https://www.figma.com/api/mcp/asset/5b5d2050-c1c6-403a-b703-6a8ebe7cc0f0"
+              alt="Advanced Financial Risk Management"
+              class="w-full h-full object-cover"
+            />
+          </div>
+
+          <!-- Info -->
+          <div class="flex-1 min-w-0 flex flex-col gap-1.5">
+            <h3 class="text-navy font-semibold text-xl leading-snug">Advanced Financial Risk Management</h3>
+            <div class="flex items-center gap-1.5">
+              <!-- accreditation icon -->
+              <svg class="w-3 h-3 text-navy flex-shrink-0" viewBox="0 0 13 13" fill="currentColor">
+                <path fill-rule="evenodd" d="M6.5 0a6.5 6.5 0 1 0 0 13A6.5 6.5 0 0 0 6.5 0ZM9.47 5.22 6.22 8.47a.75.75 0 0 1-1.06 0l-1.63-1.63a.75.75 0 1 1 1.06-1.06l1.1 1.1L8.41 4.16a.75.75 0 1 1 1.06 1.06Z" clip-rule="evenodd"/>
+              </svg>
+              <span class="text-slate-body text-sm">CPD Accredited</span>
+            </div>
+          </div>
+
+          <!-- Price + Remove -->
+          <div class="flex sm:flex-col items-center sm:items-end gap-6 sm:gap-3 w-full sm:w-auto justify-between sm:justify-start">
+            <span class="text-navy font-bold text-lg" data-price="495">£495.00</span>
+            <button
+              onclick="removeItem('item-1', 495)"
+              class="btn-remove p-2 rounded text-slate-muted transition"
+              aria-label="Remove course"
+            >
+              <svg class="w-4 h-[18px]" fill="none" viewBox="0 0 16 18" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M1.5 4.5h13M5.5 4.5v-3h5v3M6.5 8.25v6M9.5 8.25v6M2.5 4.5l1 11h9l1-11"/>
+              </svg>
+            </button>
+          </div>
+        </article>
+
+        <!-- Course Item 2 -->
+        <article id="item-2" class="cart-item bg-white rounded-lg shadow-card p-6 flex flex-col sm:flex-row items-start sm:items-center gap-6">
+          <!-- Thumbnail -->
+          <div class="w-full sm:w-32 h-24 rounded overflow-hidden flex-shrink-0 border border-black/5 shadow-sm">
+            <img
+              src="https://www.figma.com/api/mcp/asset/f7f98b35-ae1c-4f93-a9fd-ef7664846c2d"
+              alt="Strategic Leadership for Digital Transformation"
+              class="w-full h-full object-cover"
+            />
+          </div>
+
+          <!-- Info -->
+          <div class="flex-1 min-w-0 flex flex-col gap-1.5">
+            <h3 class="text-navy font-semibold text-xl leading-snug">Strategic Leadership for Digital Transformation</h3>
+            <div class="flex items-center gap-1.5">
+              <svg class="w-3 h-3 text-navy flex-shrink-0" viewBox="0 0 13 13" fill="currentColor">
+                <path fill-rule="evenodd" d="M6.5 0a6.5 6.5 0 1 0 0 13A6.5 6.5 0 0 0 6.5 0ZM9.47 5.22 6.22 8.47a.75.75 0 0 1-1.06 0l-1.63-1.63a.75.75 0 1 1 1.06-1.06l1.1 1.1L8.41 4.16a.75.75 0 1 1 1.06 1.06Z" clip-rule="evenodd"/>
+              </svg>
+              <span class="text-slate-body text-sm">Masters Level</span>
+            </div>
+          </div>
+
+          <!-- Price + Remove -->
+          <div class="flex sm:flex-col items-center sm:items-end gap-6 sm:gap-3 w-full sm:w-auto justify-between sm:justify-start">
+            <span class="text-navy font-bold text-lg" data-price="850">£850.00</span>
+            <button
+              onclick="removeItem('item-2', 850)"
+              class="btn-remove p-2 rounded text-slate-muted transition"
+              aria-label="Remove course"
+            >
+              <svg class="w-4 h-[18px]" fill="none" viewBox="0 0 16 18" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M1.5 4.5h13M5.5 4.5v-3h5v3M6.5 8.25v6M9.5 8.25v6M2.5 4.5l1 11h9l1-11"/>
+              </svg>
+            </button>
+          </div>
+        </article>
+
+      </div><!-- /cart-items-list -->
+
+      <!-- Continue Shopping -->
+      <div class="flex items-center gap-2 pt-4">
+        <svg class="w-4 h-4 text-navy" fill="none" viewBox="0 0 16 16" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 8H3M7 4l-4 4 4 4"/>
+        </svg>
+        <a href="#" class="text-navy font-semibold text-base hover:underline">Continue Shopping</a>
+      </div>
+
+      <!-- Money-back Guarantee -->
+      <div class="bg-white border-l-4 border-green-accent shadow-header rounded-lg pl-9 pr-8 py-8 flex flex-col sm:flex-row items-start gap-6">
+        <!-- Green shield icon -->
+        <div class="flex-shrink-0">
+          <img
+            src="https://www.figma.com/api/mcp/asset/5a961c9f-f68e-4876-bccf-6f6d3b67a0db"
+            alt=""
+            class="w-12 h-[52px] object-contain"
+          />
+        </div>
+        <div class="flex flex-col gap-1">
+          <h4 class="text-navy font-bold text-lg">Academic Money-Back Guarantee</h4>
+          <p class="text-slate-body text-sm leading-relaxed">
+            Not satisfied with your purchase? We offer a full 14-day refund policy on all non-activated digital course materials.
+          </p>
+        </div>
+      </div>
+
+    </div><!-- /left col -->
+
+
+    <!-- ── ORDER SUMMARY SIDEBAR (4 cols desktop) ── -->
+    <aside class="lg:col-span-4">
+      <div class="bg-slate-bg rounded-lg p-8 flex flex-col gap-8 sticky top-28">
+
+        <!-- Heading -->
+        <div class="border-b border-black/10 pb-4">
+          <h2 class="text-navy font-bold text-2xl">Order Summary</h2>
+        </div>
+
+        <!-- Promo Code -->
+        <div class="flex flex-col gap-3">
+          <label class="text-xs font-bold uppercase tracking-[1.2px] text-slate-body">Promo Code</label>
+          <div class="flex gap-2">
+            <input
+              id="promo-input"
+              type="text"
+              placeholder="Enter code"
+              class="flex-1 bg-white border border-black/10 rounded-lg px-4 py-3.5 text-sm text-slate-body placeholder-slate-muted transition"
+            />
+            <button
+              onclick="applyPromo()"
+              class="bg-navy text-white font-semibold text-sm px-6 py-3 rounded-lg btn-navy transition whitespace-nowrap"
+            >Apply</button>
+          </div>
+          <!-- Success message -->
+          <div id="promo-success" class="items-center gap-2 text-green-700 text-sm font-medium">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"/></svg>
+            <span id="promo-msg">Promo code applied! –10%</span>
+          </div>
+          <!-- Error message -->
+          <p id="promo-error" class="hidden text-red-600 text-sm font-medium">Invalid promo code. Try STUDY10.</p>
+        </div>
+
+        <!-- Totals -->
+        <div class="flex flex-col gap-4 pt-4">
+          <div class="flex items-center justify-between">
+            <span class="text-slate-body text-base">Subtotal</span>
+            <span id="subtotal-display" class="text-navy font-medium text-base">£1,345.00</span>
+          </div>
+          <div id="discount-row" class="hidden flex items-center justify-between">
+            <span class="text-slate-body text-base">Discount</span>
+            <span id="discount-display" class="text-green-700 font-medium text-base">–£134.50</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-slate-body text-base">VAT (20%)</span>
+            <span id="vat-display" class="text-navy font-medium text-base">£269.00</span>
+          </div>
+
+          <!-- Total line -->
+          <div class="border-t border-black/10 pt-6 flex items-end justify-between">
+            <span class="text-navy font-bold text-lg">Total</span>
+            <div class="flex flex-col items-end">
+              <span id="total-display" class="text-navy font-extrabold text-3xl tracking-[-1.5px]">£1,614.00</span>
+            </div>
+          </div>
+          <p class="text-center text-[rgba(67,71,79,0.8)] text-xs">All prices include UK VAT at 20%</p>
+        </div>
+
+        <!-- Checkout CTA -->
+        <a href="page-06-checkout.html"
+          class="bg-amber text-amber-text font-extrabold text-lg py-5 rounded-lg shadow-checkout btn-checkout transition flex items-center justify-center gap-2 text-center"
+        >
+          Proceed to Checkout
+          <!-- lock icon -->
+          <svg class="w-4 h-[21px]" fill="none" viewBox="0 0 16 21" stroke="#6b4500" stroke-width="1.5">
+            <rect x=".75" y="8.75" width="14.5" height="11.5" rx="2"/>
+            <path stroke-linecap="round" d="M4.5 8.75v-3a3.5 3.5 0 0 1 7 0v3"/>
+          </svg>
+        </a>
+
+        <!-- Trust signal -->
+        <div class="flex items-center justify-center gap-4 opacity-50">
+          <!-- Stripe logo placeholder -->
+          <img
+            src="https://www.figma.com/api/mcp/asset/851efc09-47c8-40de-83e4-2d61d858b370"
+            alt="Stripe"
+            class="h-6 w-6 object-contain grayscale"
+          />
+          <div class="w-px h-4 bg-slate-border"></div>
+          <span class="text-[#191c1d] text-[10px] font-bold uppercase tracking-[1px]">Secure Checkout</span>
+        </div>
+
+      </div>
+    </aside>
+
+  </div><!-- /grid -->
+
+</main>
+
+
+<!-- ═══════════════════════════════════
+     FOOTER
+═══════════════════════════════════ -->
+<footer class="bg-navy text-white mt-24 py-12">
+  <div class="max-w-[1280px] mx-auto px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <p class="font-black text-xl tracking-tight">StudyMate<span class="text-amber">Central</span></p>
+    <p class="text-[#8aa8e0] text-xs">© 2025 StudyMate Central · 71-75 Shelton Street, London WC2H 9JQ</p>
+  </div>
+</footer>
+
+<!-- Toast notification -->
+<div id="toast" role="alert" aria-live="polite"></div>
+
+
+<!-- ═══════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════ -->
+<script>
+  /* ─── Cart state ─── */
+  const VAT_RATE  = 0.20;
+  const VALID_PROMOS = { 'STUDY10': 0.10, 'SAVE20': 0.20 };
+
+  let cartItems = {
+    'item-1': 495,
+    'item-2': 850,
+  };
+  let promoDiscount = 0;   // fraction e.g. 0.10
+
+  /* ─── Toast ─── */
+  function showToast(msg, duration = 2500) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), duration);
+  }
+
+  /* ─── Recalculate totals ─── */
+  function recalcTotals() {
+    const subtotal = Object.values(cartItems).reduce((s, p) => s + p, 0);
+    const discount = Math.round(subtotal * promoDiscount * 100) / 100;
+    const discountedSubtotal = subtotal - discount;
+    const vat   = Math.round(discountedSubtotal * VAT_RATE * 100) / 100;
+    const total = discountedSubtotal + vat;
+
+    document.getElementById('subtotal-display').textContent = '£' + subtotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    document.getElementById('vat-display').textContent      = '£' + vat.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    document.getElementById('total-display').textContent    = '£' + total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    // Discount row
+    const discRow = document.getElementById('discount-row');
+    if (discount > 0) {
+      discRow.classList.remove('hidden');
+      discRow.classList.add('flex');
+      document.getElementById('discount-display').textContent = '–£' + discount.toFixed(2);
+    } else {
+      discRow.classList.add('hidden');
+      discRow.classList.remove('flex');
+    }
+
+    // Cart badge
+    const count = Object.keys(cartItems).length;
+    document.getElementById('cart-badge').textContent = count;
+
+    // Empty state
+    if (count === 0) {
+      document.getElementById('cart-items-list').classList.add('hidden');
+      document.getElementById('empty-cart').classList.remove('hidden');
+      document.getElementById('empty-cart').classList.add('flex');
+    }
+  }
+
+  /* ─── Remove item ─── */
+  function removeItem(id, price) {
+    const el = document.getElementById(id);
+    el.classList.add('removing');
+    setTimeout(() => {
+      el.remove();
+      delete cartItems[id];
+      recalcTotals();
+      showToast('Course removed from basket');
+    }, 320);
+  }
+
+  /* ─── Apply promo ─── */
+  function applyPromo() {
+    const input   = document.getElementById('promo-input');
+    const code    = input.value.trim().toUpperCase();
+    const errEl   = document.getElementById('promo-error');
+    const sucEl   = document.getElementById('promo-success');
+    const msgEl   = document.getElementById('promo-msg');
+
+    errEl.classList.add('hidden');
+    sucEl.classList.remove('show');
+
+    if (!code) {
+      errEl.textContent = 'Please enter a promo code.';
+      errEl.classList.remove('hidden');
+      return;
+    }
+
+    if (VALID_PROMOS[code] !== undefined) {
+      promoDiscount = VALID_PROMOS[code];
+      msgEl.textContent = 'Promo code applied! –' + (promoDiscount * 100) + '%';
+      sucEl.classList.add('show');
+      input.value = '';
+      input.disabled = true;
+      recalcTotals();
+      showToast('🎉 Promo code applied!');
+    } else {
+      errEl.textContent = 'Invalid promo code. Try STUDY10 or SAVE20.';
+      errEl.classList.remove('hidden');
+    }
+  }
+
+  /* ─── Promo input: Enter key ─── */
+  document.getElementById('promo-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') applyPromo();
+  });
+
+  /* ─── Mobile hamburger ─── */
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.getElementById('mobile-menu').classList.toggle('open');
+  });
+
+  /* ─── Cart button ─── */
+  document.getElementById('cart-btn').addEventListener('click', () => {
+    document.getElementById('main').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  /* ─── Init ─── */
+  recalcTotals();
+</script>
+
+</body>
+</html>

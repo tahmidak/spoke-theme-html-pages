@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudyMate Central – Marketing Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { inter: ['Inter', 'sans-serif'] },
+          colors: {
+            navy:    { DEFAULT: '#002653', light: '#1a3c6e' },
+            amber:   { DEFAULT: '#fdaf2e', dark: '#f4a726', darkest: '#6b4500' },
+            blue:    { soft: '#8aa8e0', pale: '#d7e3ff' },
+            red:     { DEFAULT: '#ba1a1a' },
+            slate:   { body: '#43474f', muted: '#6b7280', border: '#e7e8e9', bg: '#f3f4f5', light: '#f8f9fa' },
+            purple:  { muted: '#a6a4be' },
+          },
+          boxShadow: {
+            card:  '0 8px 32px 0 rgba(26,60,110,0.04)',
+            login: '0 32px 64px -16px rgba(0,38,83,0.1)',
+            map:   '0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+
+    /* ── Countdown ── */
+    #countdown-timer span { transition: all .3s ease; }
+
+    /* ── Hero radial glow ── */
+    .hero-glow {
+      background: radial-gradient(circle at 30% 20%, rgba(253,175,46,0.25) 0%, transparent 55%);
+    }
+
+    /* ── Progress bar fill ── */
+    .progress-fill { width: 8%; }
+
+    /* ── Login modal shadow ── */
+    .login-shadow { box-shadow: 0 32px 64px -16px rgba(0,38,83,0.10); }
+
+    /* ── 404 ghost number ── */
+    .ghost-404 {
+      font-size: clamp(100px, 20vw, 192px);
+      color: rgba(0,38,83,0.05);
+      line-height: 1;
+      font-weight: 900;
+      user-select: none;
+    }
+
+    /* ── Smooth scroll ── */
+    html { scroll-behavior: smooth; }
+
+    /* ── Mobile nav ── */
+    #mobile-menu { display: none; }
+    #mobile-menu.open { display: block; }
+
+    /* ── Value pillar card backdrop ── */
+    .pillar-card {
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      background: rgba(58,58,80,0.30);
+      border-left: 4px solid #fdaf2e;
+    }
+
+    /* ── Map overlay ── */
+    .map-overlay { background: rgba(0,38,83,0.05); }
+
+    /* ── Form focus ring ── */
+    input:focus, textarea:focus, select:focus {
+      outline: 2px solid #fdaf2e;
+      outline-offset: 1px;
+    }
+
+    /* ── Button hover ── */
+    .btn-amber:hover { filter: brightness(1.05); }
+    .btn-navy:hover  { filter: brightness(1.12); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.15); }
+
+    /* ── Password toggle ── */
+    #toggle-pw { cursor: pointer; }
+
+    /* ── Urgency bar ── */
+    #urgency-bar { position: sticky; top: 0; z-index: 40; }
+
+    /* ── Page-section nav pills ── */
+    .nav-pill { transition: background .2s, color .2s; }
+    .nav-pill.active { background: #002653; color: #fff; }
+  </style>
+</head>
+
+<body class="bg-slate-light text-navy font-inter antialiased">
+
+<!-- ═══════════════════════════════════════════════════════════
+     DEMO NAV – quick-jump between sections
+═══════════════════════════════════════════════════════════════ -->
+<nav class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-border shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-[76px]">
+
+    <!-- Logo -->
+    <a href="#" class="flex items-center gap-2">
+      <span class="font-black text-navy text-xl tracking-tight">StudyMate</span>
+      <span class="text-amber font-black text-xl">Central</span>
+    </a>
+
+    <!-- Desktop section links -->
+    <div class="hidden md:flex items-center gap-1">
+      <a href="#about"   class="nav-pill px-4 py-2 rounded-full text-sm font-semibold text-slate-body hover:bg-slate-bg transition">About</a>
+      <a href="#team"    class="nav-pill px-4 py-2 rounded-full text-sm font-semibold text-slate-body hover:bg-slate-bg transition">Team</a>
+      <a href="#deals"   class="nav-pill px-4 py-2 rounded-full text-sm font-semibold text-slate-body hover:bg-slate-bg transition">Deals</a>
+      <a href="#contact" class="nav-pill px-4 py-2 rounded-full text-sm font-semibold text-slate-body hover:bg-slate-bg transition">Contact</a>
+      <a href="#login"   class="nav-pill px-4 py-2 rounded-full text-sm font-semibold text-slate-body hover:bg-slate-bg transition">Login</a>
+      <a href="#error"   class="nav-pill px-4 py-2 rounded-full text-sm font-semibold text-slate-body hover:bg-slate-bg transition">404</a>
+    </div>
+
+    <!-- CTA -->
+    <a href="#contact" class="hidden md:inline-flex items-center gap-2 bg-amber text-amber-darkest font-bold text-sm px-5 py-2.5 rounded-lg btn-amber transition">
+      Get in Touch
+    </a>
+
+    <!-- Hamburger -->
+    <button id="hamburger" class="md:hidden p-2 rounded-lg hover:bg-slate-bg" aria-label="Toggle menu">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path id="burger-icon" stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="md:hidden bg-white border-t border-slate-border px-4 pb-4">
+    <div class="flex flex-col gap-1 pt-3">
+      <a href="#about"   class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-body hover:bg-slate-bg transition" onclick="closeMobileMenu()">About</a>
+      <a href="#team"    class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-body hover:bg-slate-bg transition" onclick="closeMobileMenu()">Team</a>
+      <a href="#deals"   class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-body hover:bg-slate-bg transition" onclick="closeMobileMenu()">Hot Deals</a>
+      <a href="#contact" class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-body hover:bg-slate-bg transition" onclick="closeMobileMenu()">Contact</a>
+      <a href="#login"   class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-body hover:bg-slate-bg transition" onclick="closeMobileMenu()">Login</a>
+      <a href="#error"   class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-body hover:bg-slate-bg transition" onclick="closeMobileMenu()">404</a>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PATTERN 1 — ABOUT PAGE HERO
+═══════════════════════════════════════════════════════════════ -->
+<section id="about" class="relative bg-navy-light overflow-hidden py-24 lg:py-32">
+  <!-- Glow overlay -->
+  <div class="absolute inset-0 hero-glow opacity-100 pointer-events-none"></div>
+
+  <div class="relative max-w-[1280px] mx-auto px-6 lg:px-8 flex flex-col gap-16">
+
+    <!-- Headline + sub -->
+    <div class="flex flex-col gap-6 max-w-2xl">
+      <h1 class="text-white font-extrabold text-[clamp(36px,6vw,60px)] leading-tight tracking-[-1.5px]">
+        Empowering UK<br />
+        Professionals Since 2020
+      </h1>
+      <p class="text-blue-soft text-lg sm:text-xl leading-[1.6] max-w-2xl">
+        We bridge the gap between traditional academic excellence and the fast-paced demands of modern industry. Our mission is to provide accessible, high-caliber professional development for the next generation of UK leaders.
+      </p>
+    </div>
+
+    <!-- Value pillars -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Pillar 1 -->
+      <div class="pillar-card rounded-xl p-8 relative">
+        <!-- Icon placeholder -->
+        <div class="mb-6 w-8 h-8 flex items-center justify-center">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fdaf2e" stroke-width="2" class="w-7 h-7">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+          </svg>
+        </div>
+        <h3 class="text-white font-bold text-xl mb-3">Accredited</h3>
+        <p class="text-purple-muted text-sm leading-relaxed">
+          Nationally recognized certifications that carry weight with top-tier employers across the UK.
+        </p>
+      </div>
+
+      <!-- Pillar 2 -->
+      <div class="pillar-card rounded-xl p-8 relative">
+        <div class="mb-6 w-8 h-8 flex items-center justify-center">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fdaf2e" stroke-width="2" class="w-8 h-8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.63 48.63 0 0 1 12 20.904a48.63 48.63 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"/>
+          </svg>
+        </div>
+        <h3 class="text-white font-bold text-xl mb-3">Expert-Led</h3>
+        <p class="text-purple-muted text-sm leading-relaxed">
+          Learn from industry veterans and PhD-level academics who bring real-world insights to every module.
+        </p>
+      </div>
+
+      <!-- Pillar 3 -->
+      <div class="pillar-card rounded-xl p-8 relative sm:col-span-2 lg:col-span-1">
+        <div class="mb-6 w-8 h-8 flex items-center justify-center">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fdaf2e" stroke-width="2" class="w-7 h-7">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/>
+          </svg>
+        </div>
+        <h3 class="text-white font-bold text-xl mb-3">Career Focused</h3>
+        <p class="text-purple-muted text-sm leading-relaxed">
+          Practical skills designed for immediate workplace application and measurable career progression.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PATTERN 2 — MEET THE TEAM
+═══════════════════════════════════════════════════════════════ -->
+<section id="team" class="bg-slate-light py-24">
+  <div class="max-w-[1280px] mx-auto px-6 lg:px-8 flex flex-col gap-12">
+
+    <!-- Section header -->
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div class="flex flex-col gap-2">
+        <h2 class="text-navy font-bold text-4xl">Meet the Team</h2>
+        <p class="text-slate-body text-base">The minds behind your academic success.</p>
+      </div>
+      <a href="#" class="inline-flex items-center gap-2 text-navy font-semibold text-base hover:underline self-start sm:self-auto">
+        Join our mission
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 16 16"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </a>
+    </div>
+
+    <!-- Team cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+      <!-- Card 1 -->
+      <article class="bg-white rounded-xl shadow-card overflow-hidden">
+        <div class="p-6 pb-0">
+          <div class="rounded-lg overflow-hidden aspect-square">
+            <img
+              src="https://www.figma.com/api/mcp/asset/58a4cbc3-1dac-453a-899b-0bc7c08f4a73"
+              alt="Dr. Sarah Jenkins"
+              class="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+        <div class="px-6 pb-6 pt-5 flex flex-col gap-1">
+          <h3 class="text-navy font-bold text-xl">Dr. Sarah Jenkins</h3>
+          <p class="text-slate-body text-sm">Academic Director</p>
+          <a href="#" aria-label="LinkedIn" class="mt-3 inline-flex items-center justify-center w-10 h-8 bg-slate-border rounded">
+            <svg class="w-4 h-4 text-slate-body" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="bg-white rounded-xl shadow-card overflow-hidden">
+        <div class="p-6 pb-0">
+          <div class="rounded-lg overflow-hidden aspect-square">
+            <img
+              src="https://www.figma.com/api/mcp/asset/ca4dfd5b-9c51-4059-87fa-eb2f5f9d3271"
+              alt="David Thorne"
+              class="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+        <div class="px-6 pb-6 pt-5 flex flex-col gap-1">
+          <h3 class="text-navy font-bold text-xl">David Thorne</h3>
+          <p class="text-slate-body text-sm">Head of Industry Partnerships</p>
+          <a href="#" aria-label="LinkedIn" class="mt-3 inline-flex items-center justify-center w-10 h-8 bg-slate-border rounded">
+            <svg class="w-4 h-4 text-slate-body" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="bg-white rounded-xl shadow-card overflow-hidden sm:col-span-2 lg:col-span-1 sm:max-w-sm sm:mx-auto lg:max-w-none">
+        <div class="p-6 pb-0">
+          <div class="rounded-lg overflow-hidden aspect-square">
+            <img
+              src="https://www.figma.com/api/mcp/asset/4d3f23a0-854c-45ec-9395-a508f476af78"
+              alt="Amara Okafor"
+              class="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+        <div class="px-6 pb-6 pt-5 flex flex-col gap-1">
+          <h3 class="text-navy font-bold text-xl">Amara Okafor</h3>
+          <p class="text-slate-body text-sm">Student Success Manager</p>
+          <a href="#" aria-label="LinkedIn" class="mt-3 inline-flex items-center justify-center w-10 h-8 bg-slate-border rounded">
+            <svg class="w-4 h-4 text-slate-body" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          </a>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PATTERN 4 — HOT DEALS URGENCY BAR + SALE CARDS
+═══════════════════════════════════════════════════════════════ -->
+
+<!-- Sticky urgency bar -->
+<div id="deals" class="bg-amber-dark w-full">
+  <div id="urgency-bar" class="bg-amber-dark py-4">
+    <div class="max-w-[1280px] mx-auto px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
+      <!-- Label -->
+      <div class="flex items-center gap-3">
+        <svg class="w-4 h-5 flex-shrink-0" viewBox="0 0 16 19" fill="#6b4500"><path d="M9.5 0 6 8h5L4.5 19l10-11H9L14.5 0H9.5Z"/></svg>
+        <span class="font-black text-amber-darkest text-xl tracking-tight">LIMITED TIME OFFERS 🔥</span>
+      </div>
+
+      <!-- Right: timer + copy -->
+      <div class="flex flex-wrap items-center gap-4">
+        <!-- Countdown -->
+        <div id="countdown-timer" class="flex gap-2">
+          <div class="bg-white/20 border border-amber-darkest/20 rounded px-3 py-1 font-bold text-amber-darkest text-sm" id="timer-h">02h</div>
+          <div class="bg-white/20 border border-amber-darkest/20 rounded px-3 py-1 font-bold text-amber-darkest text-sm" id="timer-m">45m</div>
+          <div class="bg-white/20 border border-amber-darkest/20 rounded px-3 py-1 font-bold text-amber-darkest text-sm" id="timer-s">12s</div>
+        </div>
+        <p class="text-amber-darkest text-sm font-medium hidden sm:block">Flash sale ending soon on all premium certifications.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sale cards -->
+<section class="bg-slate-bg py-16">
+  <div class="max-w-[1280px] mx-auto px-6 lg:px-8 flex flex-col gap-12">
+
+    <!-- Cards grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+      <!-- Sale Card 1 -->
+      <article class="bg-white rounded-xl overflow-hidden relative flex flex-col">
+        <span class="absolute top-4 left-4 bg-red text-white text-xs font-bold px-3 py-1 rounded z-10">SALE</span>
+        <div class="h-48 overflow-hidden relative">
+          <img src="https://www.figma.com/api/mcp/asset/6e236e76-016d-4304-9c1e-6344da2c917f" alt="Executive Leadership Masterclass" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-6 flex flex-col gap-2 flex-1">
+          <h4 class="text-navy font-bold text-lg leading-snug">Executive Leadership Masterclass</h4>
+          <div class="flex items-baseline gap-2 pb-4">
+            <span class="text-navy font-extrabold text-2xl">£299</span>
+            <span class="text-slate-body text-sm line-through">£850</span>
+            <span class="text-red font-bold text-xs">65% OFF</span>
+          </div>
+          <button class="bg-amber text-amber-darkest font-bold text-base py-3 rounded-lg btn-amber transition w-full mt-auto">Enroll Now</button>
+        </div>
+      </article>
+
+      <!-- Sale Card 2 -->
+      <article class="bg-white rounded-xl overflow-hidden relative flex flex-col">
+        <span class="absolute top-4 left-4 bg-red text-white text-xs font-bold px-3 py-1 rounded z-10">SALE</span>
+        <div class="h-48 overflow-hidden relative">
+          <img src="https://www.figma.com/api/mcp/asset/32feba30-e87a-4027-8b0b-af33feec35de" alt="Advanced Data Analytics Professional" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-6 flex flex-col gap-2 flex-1">
+          <h4 class="text-navy font-bold text-lg leading-snug">Advanced Data Analytics Professional</h4>
+          <div class="flex items-baseline gap-2 pb-4">
+            <span class="text-navy font-extrabold text-2xl">£450</span>
+            <span class="text-slate-body text-sm line-through">£1,200</span>
+            <span class="text-red font-bold text-xs">62% OFF</span>
+          </div>
+          <button class="bg-amber text-amber-darkest font-bold text-base py-3 rounded-lg btn-amber transition w-full mt-auto">Enroll Now</button>
+        </div>
+      </article>
+
+      <!-- Sale Card 3 -->
+      <article class="bg-white rounded-xl overflow-hidden relative flex flex-col sm:col-span-2 lg:col-span-1 sm:max-w-sm sm:mx-auto lg:max-w-none w-full">
+        <span class="absolute top-4 left-4 bg-red text-white text-xs font-bold px-3 py-1 rounded z-10">SALE</span>
+        <div class="h-48 overflow-hidden relative">
+          <img src="https://www.figma.com/api/mcp/asset/413371f9-ce6a-462d-aa1a-0946314535d3" alt="Agile Project Management Suite" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-6 flex flex-col gap-2 flex-1">
+          <h4 class="text-navy font-bold text-lg leading-snug">Agile Project Management Suite</h4>
+          <div class="flex items-baseline gap-2 pb-4">
+            <span class="text-navy font-extrabold text-2xl">£199</span>
+            <span class="text-slate-body text-sm line-through">£550</span>
+            <span class="text-red font-bold text-xs">64% OFF</span>
+          </div>
+          <button class="bg-amber text-amber-darkest font-bold text-base py-3 rounded-lg btn-amber transition w-full mt-auto">Enroll Now</button>
+        </div>
+      </article>
+    </div>
+
+    <!-- Social proof + progress bar -->
+    <div class="bg-white/80 backdrop-blur rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <!-- Viewing count -->
+      <div class="flex items-center gap-3 shrink-0">
+        <svg class="w-5 h-4 text-amber" viewBox="0 0 22 15" fill="currentColor"><path d="M11 0C6 0 1.73 3.11 0 7.5 1.73 11.89 6 15 11 15s9.27-3.11 11-7.5C20.27 3.11 16 0 11 0Zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg>
+        <span class="text-navy font-semibold text-sm">142 students viewing these deals right now</span>
+      </div>
+      <!-- Progress bar -->
+      <div class="flex flex-col gap-1.5 w-full sm:max-w-md">
+        <div class="flex items-center justify-between text-xs font-bold text-slate-body">
+          <span>Offers Remaining</span>
+          <span>8% Claimed</span>
+        </div>
+        <div class="bg-slate-border h-2 rounded-full overflow-hidden">
+          <div class="progress-fill h-full bg-amber rounded-full"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PATTERN 3 — CONTACT PAGE
+═══════════════════════════════════════════════════════════════ -->
+<section id="contact" class="bg-slate-light py-24">
+  <div class="max-w-[1280px] mx-auto px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
+
+      <!-- LEFT: Contact form -->
+      <div class="flex flex-col gap-4">
+        <h2 class="text-navy font-bold text-4xl">Get in Touch</h2>
+        <p class="text-slate-body text-base">
+          Have questions about accreditation? Our team usually responds within 2 business hours.
+        </p>
+
+        <form id="contact-form" class="flex flex-col gap-6 pt-6" novalidate>
+
+          <!-- Name + Email row -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="flex flex-col gap-2">
+              <label for="cf-name" class="text-xs font-bold uppercase tracking-[0.6px] text-slate-body">Full Name</label>
+              <input id="cf-name" type="text" placeholder="John Doe" autocomplete="name"
+                class="bg-slate-bg rounded-lg px-4 py-[18px] text-base text-slate-body placeholder-slate-muted w-full transition" />
+            </div>
+            <div class="flex flex-col gap-2">
+              <label for="cf-email" class="text-xs font-bold uppercase tracking-[0.6px] text-slate-body">Email Address</label>
+              <input id="cf-email" type="email" placeholder="john@company.com" autocomplete="email"
+                class="bg-slate-bg rounded-lg px-4 py-[18px] text-base text-slate-body placeholder-slate-muted w-full transition" />
+            </div>
+          </div>
+
+          <!-- Subject -->
+          <div class="flex flex-col gap-2">
+            <label for="cf-subject" class="text-xs font-bold uppercase tracking-[0.6px] text-slate-body">Subject</label>
+            <div class="relative">
+              <select id="cf-subject"
+                class="bg-slate-bg rounded-lg px-4 py-4 text-base text-navy w-full appearance-none transition cursor-pointer">
+                <option>Course Inquiry</option>
+                <option>Accreditation Question</option>
+                <option>Technical Support</option>
+                <option>Billing</option>
+                <option>Other</option>
+              </select>
+              <div class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
+                <svg class="w-5 h-5 text-slate-body" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m19 9-7 7-7-7"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Message -->
+          <div class="flex flex-col gap-2">
+            <label for="cf-message" class="text-xs font-bold uppercase tracking-[0.6px] text-slate-body">Message</label>
+            <textarea id="cf-message" rows="5" placeholder="Tell us how we can help..."
+              class="bg-slate-bg rounded-lg px-4 py-4 text-base text-slate-body placeholder-slate-muted w-full resize-none transition"></textarea>
+          </div>
+
+          <!-- Submit -->
+          <div>
+            <button type="submit"
+              class="bg-amber-dark text-white font-bold text-base px-10 py-4 rounded-lg btn-amber shadow-md transition">
+              Send Message
+            </button>
+          </div>
+
+          <!-- Success message (hidden) -->
+          <div id="form-success" class="hidden bg-green-50 border border-green-200 text-green-800 rounded-lg px-4 py-3 text-sm font-medium">
+            ✅ Message sent! We'll be in touch within 2 business hours.
+          </div>
+        </form>
+      </div>
+
+      <!-- RIGHT: Contact details -->
+      <div class="flex flex-col gap-12">
+
+        <!-- Office + Contact info -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+          <div class="flex flex-col gap-3">
+            <h4 class="text-navy font-bold text-base">London Office</h4>
+            <p class="text-slate-body text-sm leading-relaxed">
+              71-75 Shelton Street<br />
+              Covent Garden, London<br />
+              WC2H 9JQ, United Kingdom
+            </p>
+          </div>
+          <div class="flex flex-col gap-3">
+            <h4 class="text-navy font-bold text-base">Contact Info</h4>
+            <p class="text-slate-body text-sm leading-relaxed">
+              Email: support@studymate.uk<br />
+              Phone: +44 20 7946 0123<br />
+              Hours: Mon-Fri, 9am – 6pm
+            </p>
+          </div>
+        </div>
+
+        <!-- Map placeholder -->
+        <div class="rounded-xl overflow-hidden h-80 relative bg-slate-border">
+          <img
+            src="https://www.figma.com/api/mcp/asset/39a36938-c304-4ec6-b120-dc0bac9df944"
+            alt="Map showing Covent Garden, London"
+            class="w-full h-full object-cover"
+          />
+          <div class="map-overlay absolute inset-0 flex items-center justify-center">
+            <div class="bg-white rounded-lg p-4 flex items-center gap-3 shadow-map">
+              <svg class="w-4 h-5 text-red flex-shrink-0" fill="currentColor" viewBox="0 0 16 20">
+                <path fill-rule="evenodd" d="M8 0C5.239 0 3 2.239 3 5c0 4.418 5 10 5 10s5-5.582 5-10C13 2.239 10.761 0 8 0Zm0 7.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5Z" clip-rule="evenodd"/>
+              </svg>
+              <span class="text-navy font-bold text-base">Covent Garden, London</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ teaser -->
+        <div class="bg-navy-light rounded-xl px-6 py-6 flex items-center justify-between gap-4">
+          <div class="flex flex-col gap-1">
+            <h4 class="text-white font-bold text-base">Quick help needed?</h4>
+            <p class="text-blue-soft text-xs">Browse our most frequently asked questions.</p>
+          </div>
+          <a href="#" class="bg-white/10 text-white text-sm font-medium px-4 py-2 rounded btn-ghost transition whitespace-nowrap">Go to FAQ</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PATTERN 5 — LOGIN PAGE (modal-style section)
+═══════════════════════════════════════════════════════════════ -->
+<section id="login" class="bg-slate-bg py-24 flex items-center justify-center">
+  <div class="w-full max-w-md mx-6">
+    <div class="bg-white rounded-2xl p-10 sm:p-12 login-shadow flex flex-col gap-10">
+
+      <!-- Header -->
+      <div class="flex flex-col items-center gap-2 text-center">
+        <p class="text-navy font-black text-2xl tracking-tight">StudyMate Central</p>
+        <h2 class="text-navy font-extrabold text-3xl">Welcome Back</h2>
+        <p class="text-slate-body text-sm">Access your learning dashboard</p>
+      </div>
+
+      <!-- Form fields -->
+      <div class="flex flex-col gap-6">
+
+        <!-- Email -->
+        <div class="flex flex-col gap-2">
+          <label for="login-email" class="text-xs font-bold uppercase tracking-[0.6px] text-slate-body">Email Address</label>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+              <svg class="w-4 h-3" fill="none" viewBox="0 0 15 12" stroke="#6b7280" stroke-width="1.5">
+                <rect x=".75" y=".75" width="13.5" height="10.5" rx="1.5"/>
+                <path d="m1 1 6.5 5.5L14 1" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <input id="login-email" type="email" placeholder="name@email.com" autocomplete="email"
+              class="bg-slate-bg rounded-lg pl-12 pr-4 py-[18px] text-base w-full placeholder-slate-muted transition" />
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <label for="login-pw" class="text-xs font-bold uppercase tracking-[0.6px] text-slate-body">Password</label>
+            <a href="#" class="text-navy text-xs font-bold hover:underline">Forgot?</a>
+          </div>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+              <svg class="w-3 h-4" fill="none" viewBox="0 0 12 16" stroke="#6b7280" stroke-width="1.5">
+                <rect x=".75" y="6.75" width="10.5" height="8.5" rx="1.5"/>
+                <path d="M3 6.75v-2.5a3 3 0 0 1 6 0v2.5" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <input id="login-pw" type="password" placeholder="••••••••" autocomplete="current-password"
+              class="bg-slate-bg rounded-lg pl-12 pr-12 py-[18px] text-base w-full placeholder-slate-muted transition" />
+            <button type="button" id="toggle-pw" aria-label="Toggle password visibility"
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-muted hover:text-navy transition">
+              <svg id="pw-eye" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Sign In btn -->
+        <button type="button" class="bg-navy text-white font-bold text-base py-4 rounded-lg btn-navy transition w-full">
+          Sign In to Dashboard
+        </button>
+
+        <!-- Divider -->
+        <div class="relative flex items-center py-4">
+          <div class="flex-1 border-t border-slate-border"></div>
+          <span class="bg-white px-3 text-xs font-medium text-slate-body uppercase tracking-widest">Or continue with</span>
+          <div class="flex-1 border-t border-slate-border"></div>
+        </div>
+
+        <!-- Social buttons -->
+        <div class="grid grid-cols-2 gap-4">
+          <button class="border border-slate-border/50 rounded-lg py-3 flex items-center justify-center gap-2 hover:bg-slate-bg transition font-medium text-sm text-navy">
+            <img src="https://www.figma.com/api/mcp/asset/a65092bd-894e-45b4-b3d5-b303cdfad7d1" alt="Google" class="w-5 h-5 object-contain" />
+            Google
+          </button>
+          <button class="border border-slate-border/50 rounded-lg py-3 flex items-center justify-center gap-2 hover:bg-slate-bg transition font-medium text-sm text-navy">
+            <img src="https://www.figma.com/api/mcp/asset/9af1356d-5e63-4f75-b67e-ac9b1f0bd629" alt="Facebook" class="w-5 h-5 object-contain" />
+            Facebook
+          </button>
+        </div>
+
+        <!-- Sign up link -->
+        <p class="text-center text-slate-body text-sm pt-4">
+          New student? <a href="#" class="text-navy font-bold hover:underline">Browse all courses</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PATTERN 6 — 404 ERROR PAGE
+═══════════════════════════════════════════════════════════════ -->
+<section id="error" class="bg-slate-light min-h-screen py-24 flex flex-col items-center justify-center gap-12">
+
+  <!-- Ghost + icon + heading -->
+  <div class="relative flex flex-col items-center">
+    <span class="ghost-404">404</span>
+    <!-- Icon overlay -->
+    <div class="absolute inset-0 flex flex-col items-center justify-center gap-4">
+      <img
+        src="https://www.figma.com/api/mcp/asset/4b0dc57a-c72a-4476-a503-bd465f1fb100"
+        alt=""
+        class="w-20 h-[76px] object-contain"
+      />
+      <h2 class="text-navy font-bold text-3xl">Page Not Found</h2>
+    </div>
+  </div>
+
+  <!-- Description -->
+  <p class="text-slate-body text-base text-center max-w-md leading-relaxed px-4">
+    We couldn't find the curriculum you were looking for. It might have been moved or the accreditation link has expired.
+  </p>
+
+  <!-- Search box -->
+  <div class="relative w-full max-w-lg px-4">
+    <input
+      type="search"
+      placeholder="Search for courses, skills or teachers..."
+      class="bg-slate-bg rounded-xl pl-5 pr-16 py-5 text-base text-slate-body placeholder-slate-muted w-full shadow-sm transition"
+    />
+    <button class="absolute right-8 sm:right-5 top-1/2 -translate-y-1/2 bg-navy text-white p-2 rounded-lg btn-navy transition" aria-label="Search">
+      <svg class="w-[18px] h-[18px]" fill="none" viewBox="0 0 18 18" stroke="currentColor" stroke-width="2">
+        <circle cx="7.5" cy="7.5" r="5.25"/>
+        <path stroke-linecap="round" d="m11.25 11.25 4.5 4.5"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- CTA buttons -->
+  <div class="flex flex-col sm:flex-row gap-4 px-4">
+    <a href="#deals" class="bg-amber-dark text-white font-bold text-base px-10 py-4 rounded-lg btn-amber transition text-center">
+      Browse All Courses
+    </a>
+    <a href="#about" class="border border-navy/20 text-navy font-bold text-base px-10 py-4 rounded-lg hover:bg-navy/5 transition text-center">
+      Go to Homepage
+    </a>
+  </div>
+
+  <!-- Popular courses mini-grid -->
+  <div class="w-full max-w-[1280px] px-6 lg:px-8 flex flex-col gap-8">
+    <p class="text-center text-slate-body text-xs font-bold uppercase tracking-[2.8px]">Popular starting points</p>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+
+      <a href="#" class="bg-white rounded-xl p-6 flex items-center gap-4 hover:shadow-card transition">
+        <div class="bg-blue-pale rounded w-12 h-12 flex items-center justify-center flex-shrink-0">
+          <img src="https://www.figma.com/api/mcp/asset/5c882a94-1ecd-4e95-825f-4685167d2a2e" alt="" class="w-5 h-4 object-contain" />
+        </div>
+        <div>
+          <p class="text-navy font-bold text-base">Financial Literacy</p>
+          <p class="text-slate-body text-xs">12 Modules • Accredited</p>
+        </div>
+      </a>
+
+      <a href="#" class="bg-white rounded-xl p-6 flex items-center gap-4 hover:shadow-card transition">
+        <div class="bg-blue-pale rounded w-12 h-12 flex items-center justify-center flex-shrink-0">
+          <img src="https://www.figma.com/api/mcp/asset/a2dab230-886b-41f2-abde-805d54538e56" alt="" class="w-5 h-3 object-contain" />
+        </div>
+        <div>
+          <p class="text-navy font-bold text-base">Web Architecture</p>
+          <p class="text-slate-body text-xs">24 Modules • Career-ready</p>
+        </div>
+      </a>
+
+      <a href="#" class="bg-white rounded-xl p-6 flex items-center gap-4 hover:shadow-card transition">
+        <div class="bg-blue-pale rounded w-12 h-12 flex items-center justify-center flex-shrink-0">
+          <img src="https://www.figma.com/api/mcp/asset/e44da40b-b4f0-4b42-947c-6abac19879dc" alt="" class="w-5 h-4 object-contain" />
+        </div>
+        <div>
+          <p class="text-navy font-bold text-base">Digital Marketing</p>
+          <p class="text-slate-body text-xs">15 Modules • Expert-led</p>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════════════════ -->
+<footer class="bg-navy text-white py-16">
+  <div class="max-w-[1280px] mx-auto px-6 lg:px-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+      <div class="sm:col-span-2 lg:col-span-1">
+        <p class="font-black text-2xl tracking-tight mb-3">StudyMate<span class="text-amber">Central</span></p>
+        <p class="text-blue-soft text-sm leading-relaxed max-w-xs">
+          Empowering UK professionals with accredited, expert-led professional development since 2020.
+        </p>
+      </div>
+      <div>
+        <p class="font-bold text-sm uppercase tracking-wider mb-4">Company</p>
+        <ul class="flex flex-col gap-2 text-blue-soft text-sm">
+          <li><a href="#about" class="hover:text-white transition">About Us</a></li>
+          <li><a href="#team" class="hover:text-white transition">Our Team</a></li>
+          <li><a href="#contact" class="hover:text-white transition">Careers</a></li>
+          <li><a href="#contact" class="hover:text-white transition">Press</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="font-bold text-sm uppercase tracking-wider mb-4">Courses</p>
+        <ul class="flex flex-col gap-2 text-blue-soft text-sm">
+          <li><a href="#deals" class="hover:text-white transition">All Courses</a></li>
+          <li><a href="#deals" class="hover:text-white transition">Hot Deals</a></li>
+          <li><a href="#deals" class="hover:text-white transition">Certificates</a></li>
+          <li><a href="#deals" class="hover:text-white transition">Corporate Training</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="font-bold text-sm uppercase tracking-wider mb-4">Support</p>
+        <ul class="flex flex-col gap-2 text-blue-soft text-sm">
+          <li><a href="#contact" class="hover:text-white transition">Contact Us</a></li>
+          <li><a href="#" class="hover:text-white transition">FAQ</a></li>
+          <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+          <li><a href="#" class="hover:text-white transition">Terms</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-blue-soft text-xs">
+      <p>© 2025 StudyMate Central. All rights reserved.</p>
+      <p>71-75 Shelton Street, Covent Garden, London WC2H 9JQ</p>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════════════ -->
+<script>
+  /* ── Mobile nav toggle ── */
+  const hamburger   = document.getElementById('hamburger');
+  const mobileMenu  = document.getElementById('mobile-menu');
+
+  hamburger.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
+  });
+
+  function closeMobileMenu() {
+    mobileMenu.classList.remove('open');
+  }
+
+
+  /* ── Countdown timer ── */
+  (function () {
+    // Seed: 2h 45m 12s
+    let totalSeconds = 2 * 3600 + 45 * 60 + 12;
+
+    const hEl = document.getElementById('timer-h');
+    const mEl = document.getElementById('timer-m');
+    const sEl = document.getElementById('timer-s');
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function tick() {
+      if (totalSeconds <= 0) {
+        hEl.textContent = '00h';
+        mEl.textContent = '00m';
+        sEl.textContent = '00s';
+        return;
+      }
+      totalSeconds--;
+      const h = Math.floor(totalSeconds / 3600);
+      const m = Math.floor((totalSeconds % 3600) / 60);
+      const s = totalSeconds % 60;
+      hEl.textContent = pad(h) + 'h';
+      mEl.textContent = pad(m) + 'm';
+      sEl.textContent = pad(s) + 's';
+    }
+
+    tick();
+    setInterval(tick, 1000);
+  })();
+
+
+  /* ── Contact form submit ── */
+  document.getElementById('contact-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const name    = document.getElementById('cf-name').value.trim();
+    const email   = document.getElementById('cf-email').value.trim();
+    const message = document.getElementById('cf-message').value.trim();
+
+    if (!name || !email || !message) {
+      alert('Please fill in your name, email, and message.');
+      return;
+    }
+
+    // Simulate send
+    const btn = this.querySelector('button[type="submit"]');
+    btn.textContent = 'Sending…';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      document.getElementById('form-success').classList.remove('hidden');
+      btn.textContent = 'Send Message';
+      btn.disabled = false;
+      this.reset();
+    }, 1200);
+  });
+
+
+  /* ── Password visibility toggle ── */
+  document.getElementById('toggle-pw').addEventListener('click', function () {
+    const pw  = document.getElementById('login-pw');
+    const eye = document.getElementById('pw-eye');
+    if (pw.type === 'password') {
+      pw.type = 'text';
+      eye.innerHTML = `
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"/>
+      `;
+    } else {
+      pw.type = 'password';
+      eye.innerHTML = `
+        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+      `;
+    }
+  });
+
+
+  /* ── Active nav pill on scroll ── */
+  const sections = document.querySelectorAll('section[id], div[id="deals"]');
+  const navLinks = document.querySelectorAll('.nav-pill');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => {
+          l.classList.remove('active');
+          if (l.getAttribute('href') === '#' + entry.target.id) {
+            l.classList.add('active');
+          }
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(s => observer.observe(s));
+
+
+  /* ── Enroll Now buttons (demo) ── */
+  document.querySelectorAll('button').forEach(btn => {
+    if (btn.textContent.trim() === 'Enroll Now') {
+      btn.addEventListener('click', function () {
+        this.textContent = '✓ Added to Cart';
+        this.classList.add('bg-green-500', 'text-white');
+        this.classList.remove('bg-amber', 'text-amber-darkest');
+        setTimeout(() => {
+          this.textContent = 'Enroll Now';
+          this.classList.remove('bg-green-500', 'text-white');
+          this.classList.add('bg-amber', 'text-amber-darkest');
+        }, 2000);
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

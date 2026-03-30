@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard – Spoke Theme</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap"
+    rel="stylesheet" />
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['DM Sans', 'sans-serif'],
+            display: ['DM Serif Display', 'serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f4ff',
+              100: '#e0eaff',
+              200: '#c3d4fe',
+              300: '#9ab4fd',
+              400: '#6e8dfb',
+              500: '#4a6cf7',
+              600: '#3451ec',
+              700: '#2a3ed9',
+              800: '#2534b0',
+              900: '#23318b',
+              950: '#161f5a',
+            },
+            surface: {
+              DEFAULT: '#ffffff',
+              muted: '#f8f9fc',
+              border: '#e8ecf4',
+            },
+            ink: {
+              DEFAULT: '#111827',
+              muted: '#6b7280',
+              light: '#9ca3af',
+            },
+            success: { DEFAULT: '#16a34a', light: '#dcfce7' },
+            warning: { DEFAULT: '#d97706', light: '#fef3c7' },
+            danger: { DEFAULT: '#dc2626', light: '#fee2e2' },
+          },
+          boxShadow: {
+            card: '0 1px 3px 0 rgba(17,24,39,0.06), 0 1px 2px -1px rgba(17,24,39,0.04)',
+            raised: '0 4px 16px -2px rgba(17,24,39,0.10), 0 2px 6px -2px rgba(17,24,39,0.06)',
+            glow: '0 0 0 3px rgba(74,108,247,0.18)',
+          },
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* ── Base ── */
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #f8f9fc;
+      color: #111827;
+    }
+
+    /* ── Sidebar ── */
+    #sidebar {
+      transition: transform 0.28s cubic-bezier(.4, 0, .2, 1), width 0.28s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    #sidebar.collapsed {
+      width: 72px;
+    }
+
+    #sidebar.collapsed .nav-label,
+    #sidebar.collapsed .sidebar-logo-text,
+    #sidebar.collapsed .sidebar-user-meta,
+    #sidebar.collapsed .sidebar-section-label {
+      display: none;
+    }
+
+    #sidebar.collapsed .sidebar-logo {
+      justify-content: center;
+    }
+
+    #sidebar.collapsed .nav-item {
+      justify-content: center;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    #sidebar.collapsed .nav-item-inner {
+      justify-content: center;
+    }
+
+    /* ── Mobile sidebar overlay ── */
+    #sidebar-overlay {
+      transition: opacity 0.25s ease;
+    }
+
+    /* ── Progress ring ── */
+    .ring-track {
+      fill: none;
+      stroke: #e8ecf4;
+      stroke-width: 8;
+    }
+
+    .ring-fill {
+      fill: none;
+      stroke-width: 8;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1.2s cubic-bezier(.4, 0, .2, 1);
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+    }
+
+    /* ── Card hover ── */
+    .hover-lift {
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .hover-lift:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px -4px rgba(17, 24, 39, 0.12);
+    }
+
+    /* ── Skeleton shimmer ── */
+    @keyframes shimmer {
+      0% {
+        background-position: -400px 0
+      }
+
+      100% {
+        background-position: 400px 0
+      }
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #e8ecf4 25%, #f3f5fb 50%, #e8ecf4 75%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 6px;
+    }
+
+    /* ── Notification badge pulse ── */
+    @keyframes ping {
+
+      75%,
+      100% {
+        transform: scale(2);
+        opacity: 0
+      }
+    }
+
+    .badge-ping {
+      animation: ping 1.4s cubic-bezier(0, 0, .2, 1) infinite;
+    }
+
+    /* ── Tooltip ── */
+    [data-tip] {
+      position: relative;
+    }
+
+    [data-tip]::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: 110%;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #111827;
+      color: #fff;
+      font-size: 12px;
+      white-space: nowrap;
+      padding: 4px 8px;
+      border-radius: 6px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      z-index: 50;
+    }
+
+    [data-tip]:hover::after {
+      opacity: 1;
+    }
+
+    /* ── Tab indicator ── */
+    .tab-active {
+      border-bottom: 2px solid #4a6cf7;
+      color: #4a6cf7;
+      font-weight: 600;
+    }
+
+    /* ── Scrollbar (sidebar) ── */
+    .thin-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .thin-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .thin-scroll::-webkit-scrollbar-thumb {
+      background: #d1d5db;
+      border-radius: 99px;
+    }
+
+    /* ── Dropdown ── */
+    .dropdown-menu {
+      transform-origin: top right;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+
+    .dropdown-menu.hidden {
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(0.95);
+    }
+
+    .dropdown-menu:not(.hidden) {
+      opacity: 1;
+      transform: scale(1);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex">
+
+  <!-- ═══════════════════════════════════════════════════════
+     MOBILE SIDEBAR OVERLAY
+═══════════════════════════════════════════════════════ -->
+  <div id="sidebar-overlay" class="fixed inset-0 bg-ink/40 z-30 hidden opacity-0 lg:hidden"
+    onclick="closeMobileSidebar()"></div>
+
+  <!-- ═══════════════════════════════════════════════════════
+     SIDEBAR
+═══════════════════════════════════════════════════════ -->
+  <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-white border-r border-surface-border z-40
+              flex flex-col -translate-x-full lg:translate-x-0 lg:relative lg:flex-shrink-0
+              thin-scroll overflow-y-auto overflow-x-hidden">
+
+    <!-- Logo -->
+    <div class="sidebar-logo flex items-center gap-3 px-5 h-16 border-b border-surface-border flex-shrink-0">
+      <div class="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center flex-shrink-0">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <circle cx="9" cy="9" r="3.5" fill="white" />
+          <path
+            d="M9 1.5V4M9 14V16.5M1.5 9H4M14 9H16.5M3.6 3.6L5.4 5.4M12.6 12.6L14.4 14.4M14.4 3.6L12.6 5.4M5.4 12.6L3.6 14.4"
+            stroke="white" stroke-width="1.5" stroke-linecap="round" />
+        </svg>
+      </div>
+      <span class="sidebar-logo-text font-display text-xl font-medium text-ink">Spoke</span>
+      <!-- Collapse btn (desktop) -->
+      <button id="collapse-btn" class="ml-auto text-ink-light hover:text-ink transition-colors hidden lg:flex"
+        onclick="toggleCollapse()">
+        <i data-lucide="panel-left-close" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-1 py-4 px-3 flex flex-col gap-0.5">
+      <p
+        class="sidebar-section-label text-[10px] font-semibold uppercase tracking-widest text-ink-light px-2 mb-1 mt-2">
+        Main</p>
+
+      <a href="#"
+        class="nav-item flex items-center gap-3 px-2 py-2.5 rounded-lg bg-brand-50 text-brand-700 font-medium">
+        <span class="nav-item-inner flex items-center gap-3 w-full">
+          <i data-lucide="layout-dashboard" class="w-5 h-5 flex-shrink-0"></i>
+          <span class="nav-label text-sm">Dashboard</span>
+        </span>
+      </a>
+
+      <a href="#"
+        class="nav-item flex items-center gap-3 px-2 py-2.5 rounded-lg text-ink-muted hover:bg-surface-muted hover:text-ink transition-colors">
+        <span class="nav-item-inner flex items-center gap-3 w-full">
+          <i data-lucide="book-open" class="w-5 h-5 flex-shrink-0"></i>
+          <span class="nav-label text-sm">My Courses</span>
+          <span
+            class="nav-label ml-auto bg-brand-100 text-brand-700 text-[10px] font-semibold px-1.5 py-0.5 rounded-full">6</span>
+        </span>
+      </a>
+
+      <a href="#"
+        class="nav-item flex items-center gap-3 px-2 py-2.5 rounded-lg text-ink-muted hover:bg-surface-muted hover:text-ink transition-colors">
+        <span class="nav-item-inner flex items-center gap-3 w-full">
+          <i data-lucide="search" class="w-5 h-5 flex-shrink-0"></i>
+          <span class="nav-label text-sm">Browse Catalog</span>
+        </span>
+      </a>
+
+      <a href="#"
+        class="nav-item flex items-center gap-3 px-2 py-2.5 rounded-lg text-ink-muted hover:bg-surface-muted hover:text-ink transition-colors">
+        <span class="nav-item-inner flex items-center gap-3 w-full">
+          <i data-lucide="calendar" class="w-5 h-5 flex-shrink-0"></i>
+          <span class="nav-label text-sm">Schedule</span>
+          <span class="nav-label ml-auto relative flex h-2 w-2">
+            <span class="badge-ping absolute inline-flex h-full w-full rounded-full bg-brand-500 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-600"></span>
+          </span>
+        </span>
+      </a>
+
+      <a href="#"
+        class="nav-item flex items-center gap-3 px-2 py-2.5 rounded-lg text-ink-muted hover:bg-surface-muted hover:text-ink transition-colors">
+        <span class="nav-item-inner flex items-center gap-3 w-full">
+          <i data-lucide="award" class="w-5 h-5 flex-shrink-0"></i>
+          <span class="nav-label text-sm">Certificates</span>
+        </span>
+      </a>
+
+      <p
+        class="sidebar-section-label text-[10px] font-semibold uppercase tracking-widest text-ink-light px-2 mb-1 mt-4">
+        Learning</p>
+
+      <a href="#"
+        class="nav-item flex items-center gap-3 px-2 py-2.5 rounded-lg text-ink-muted hover:bg-surface-muted hover:text-ink transition-colors">
+        <span class="nav-item-inner flex items-center gap-3 w-full">
+          <i data-lucide="bar-chart-2" class="w-5 h-5 flex-shrink-0"></i>
+          <span class="nav-label text-sm">Progress</span>
+        </span>
+      </a>
+
+      <a href="#"
+        class="nav-item flex items-center gap-3 px-2 py-2.5 rounded-lg text-ink-muted hover:bg-surface-muted hover:text-ink transition-colors">
+        <span class="nav-item-inner flex items-center gap-3 w-full">
+          <i data-lucide="bookmark" class="w-5 h-5 flex-shrink-0"></i>
+          <span class="nav-label text-sm">Saved</span>
+        </span>
+      </a>
+
+      <a href="#"
+        class="nav-item flex items-center gap-3 px-2 py-2.5 rounded-lg text-ink-muted hover:bg-surface-muted hover:text-ink transition-colors">
+        <span class="nav-item-inner flex items-center gap-3 w-full">
+          <i data-lucide="message-circle" class="w-5 h-5 flex-shrink-0"></i>
+          <span class="nav-label text-sm">Discussions</span>
+          <span
+            class="nav-label ml-auto bg-danger-light text-danger text-[10px] font-semibold px-1.5 py-0.5 rounded-full">3</span>
+        </span>
+      </a>
+
+      <p
+        class="sidebar-section-label text-[10px] font-semibold uppercase tracking-widest text-ink-light px-2 mb-1 mt-4">
+        Account</p>
+
+      <a href="#"
+        class="nav-item flex items-center gap-3 px-2 py-2.5 rounded-lg text-ink-muted hover:bg-surface-muted hover:text-ink transition-colors">
+        <span class="nav-item-inner flex items-center gap-3 w-full">
+          <i data-lucide="user" class="w-5 h-5 flex-shrink-0"></i>
+          <span class="nav-label text-sm">Profile</span>
+        </span>
+      </a>
+
+      <a href="#"
+        class="nav-item flex items-center gap-3 px-2 py-2.5 rounded-lg text-ink-muted hover:bg-surface-muted hover:text-ink transition-colors">
+        <span class="nav-item-inner flex items-center gap-3 w-full">
+          <i data-lucide="settings" class="w-5 h-5 flex-shrink-0"></i>
+          <span class="nav-label text-sm">Settings</span>
+        </span>
+      </a>
+    </nav>
+
+    <!-- User card (bottom) -->
+    <div class="border-t border-surface-border px-3 py-3 flex-shrink-0">
+      <button class="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-surface-muted transition-colors"
+        onclick="toggleDropdown('user-menu')">
+        <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=4a6cf7&color=fff&size=80" alt="Alex Morgan"
+          class="w-8 h-8 rounded-full flex-shrink-0 object-cover" />
+        <div class="sidebar-user-meta text-left min-w-0">
+          <p class="text-sm font-semibold text-ink truncate">Alex Morgan</p>
+          <p class="text-xs text-ink-light truncate">alex@example.com</p>
+        </div>
+        <i data-lucide="chevrons-up-down" class="sidebar-user-meta w-4 h-4 text-ink-light flex-shrink-0 ml-auto"></i>
+      </button>
+      <!-- User dropdown -->
+      <div id="user-menu"
+        class="dropdown-menu hidden absolute bottom-16 left-3 right-3 bg-white border border-surface-border rounded-xl shadow-raised z-50 py-1 overflow-hidden">
+        <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-surface-muted transition-colors">
+          <i data-lucide="user" class="w-4 h-4 text-ink-muted"></i> View Profile
+        </a>
+        <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-surface-muted transition-colors">
+          <i data-lucide="settings" class="w-4 h-4 text-ink-muted"></i> Account Settings
+        </a>
+        <a href="#" class="flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-surface-muted transition-colors">
+          <i data-lucide="help-circle" class="w-4 h-4 text-ink-muted"></i> Help Center
+        </a>
+        <hr class="my-1 border-surface-border" />
+        <a href="#"
+          class="flex items-center gap-2.5 px-3 py-2 text-sm text-danger hover:bg-danger-light transition-colors">
+          <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════════════════════════════════════
+     MAIN CONTENT AREA
+═══════════════════════════════════════════════════════ -->
+  <div class="flex-1 min-w-0 flex flex-col min-h-screen">
+
+    <!-- ── TOP HEADER BAR ── -->
+    <header class="sticky top-0 z-20 bg-white/90 backdrop-blur-sm border-b border-surface-border
+                 h-16 flex items-center px-4 sm:px-6 gap-4">
+      <!-- Mobile menu toggle -->
+      <button class="lg:hidden text-ink-muted hover:text-ink transition-colors" onclick="openMobileSidebar()">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Page title (mobile) -->
+      <div class="flex items-center gap-2 lg:hidden">
+        <div class="w-6 h-6 rounded-md bg-brand-600 flex items-center justify-center">
+          <svg width="12" height="12" viewBox="0 0 18 18" fill="none">
+            <circle cx="9" cy="9" r="3.5" fill="white" />
+            <path d="M9 1.5V4M9 14V16.5M1.5 9H4M14 9H16.5" stroke="white" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+        </div>
+        <span class="font-display font-medium text-ink">Spoke</span>
+      </div>
+
+      <!-- Search bar -->
+      <div class="hidden sm:flex flex-1 max-w-md">
+        <div class="relative w-full">
+          <i data-lucide="search"
+            class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-light pointer-events-none"></i>
+          <input type="text" placeholder="Search courses, lessons…" class="w-full pl-9 pr-4 py-2 bg-surface-muted border border-surface-border rounded-lg text-sm
+                      placeholder:text-ink-light focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-400
+                      transition-all" />
+        </div>
+      </div>
+
+      <!-- Right actions -->
+      <div class="ml-auto flex items-center gap-2">
+        <!-- Search mobile -->
+        <button
+          class="sm:hidden w-9 h-9 flex items-center justify-center rounded-lg hover:bg-surface-muted transition-colors text-ink-muted">
+          <i data-lucide="search" class="w-4 h-4"></i>
+        </button>
+
+        <!-- Notifications -->
+        <button
+          class="relative w-9 h-9 flex items-center justify-center rounded-lg hover:bg-surface-muted transition-colors text-ink-muted"
+          onclick="toggleDropdown('notif-menu')">
+          <i data-lucide="bell" class="w-4 h-4"></i>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-brand-600 rounded-full border-2 border-white"></span>
+        </button>
+
+        <!-- Notifications dropdown -->
+        <div id="notif-menu"
+          class="dropdown-menu hidden absolute top-14 right-4 sm:right-6 w-80 bg-white border border-surface-border rounded-xl shadow-raised z-50 overflow-hidden">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-surface-border">
+            <h3 class="font-semibold text-sm text-ink">Notifications</h3>
+            <button class="text-xs text-brand-600 hover:underline">Mark all read</button>
+          </div>
+          <div class="divide-y divide-surface-border max-h-72 overflow-y-auto thin-scroll">
+            <div class="flex gap-3 px-4 py-3 hover:bg-surface-muted transition-colors cursor-pointer">
+              <div class="w-8 h-8 rounded-full bg-success-light flex items-center justify-center flex-shrink-0 mt-0.5">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm text-ink font-medium">Lesson completed!</p>
+                <p class="text-xs text-ink-muted truncate">You finished "Intro to Typography" in UX Design Fundamentals.
+                </p>
+                <p class="text-xs text-ink-light mt-0.5">2 hours ago</p>
+              </div>
+            </div>
+            <div class="flex gap-3 px-4 py-3 hover:bg-surface-muted transition-colors cursor-pointer">
+              <div class="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <i data-lucide="message-circle" class="w-4 h-4 text-brand-600"></i>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm text-ink font-medium">New reply in discussion</p>
+                <p class="text-xs text-ink-muted truncate">Sarah replied to your post in "Advanced React Patterns".</p>
+                <p class="text-xs text-ink-light mt-0.5">5 hours ago</p>
+              </div>
+            </div>
+            <div class="flex gap-3 px-4 py-3 hover:bg-surface-muted transition-colors cursor-pointer">
+              <div class="w-8 h-8 rounded-full bg-warning-light flex items-center justify-center flex-shrink-0 mt-0.5">
+                <i data-lucide="calendar" class="w-4 h-4 text-warning"></i>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm text-ink font-medium">Live session tomorrow</p>
+                <p class="text-xs text-ink-muted truncate">Office Hours with Dr. Chen starts at 10:00 AM.</p>
+                <p class="text-xs text-ink-light mt-0.5">Yesterday</p>
+              </div>
+            </div>
+          </div>
+          <div class="px-4 py-2.5 border-t border-surface-border">
+            <a href="#" class="text-xs text-brand-600 hover:underline font-medium">View all notifications →</a>
+          </div>
+        </div>
+
+        <!-- Help -->
+        <button
+          class="hidden sm:flex w-9 h-9 items-center justify-center rounded-lg hover:bg-surface-muted transition-colors text-ink-muted">
+          <i data-lucide="help-circle" class="w-4 h-4"></i>
+        </button>
+
+        <!-- Avatar -->
+        <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=4a6cf7&color=fff&size=80" alt="Alex Morgan"
+          class="w-8 h-8 rounded-full object-cover cursor-pointer ring-2 ring-transparent hover:ring-brand-300 transition-all"
+          onclick="toggleDropdown('user-menu')" />
+      </div>
+    </header>
+
+    <!-- ── PAGE BODY ── -->
+    <main class="flex-1 px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-screen-xl w-full mx-auto space-y-8">
+
+      <!-- ─────────────────────────────────────────
+         BLOCK 1: WELCOME HERO
+    ───────────────────────────────────────── -->
+      <section
+        class="relative overflow-hidden rounded-2xl bg-brand-950 text-white px-6 sm:px-8 py-7 sm:py-9 flex flex-col sm:flex-row items-start sm:items-center gap-6">
+        <!-- Decorative circles -->
+        <div class="absolute -top-12 -right-12 w-56 h-56 bg-brand-800/40 rounded-full pointer-events-none"></div>
+        <div class="absolute top-4 right-20 w-20 h-20 bg-brand-700/30 rounded-full pointer-events-none"></div>
+        <div class="absolute -bottom-8 right-36 w-36 h-36 bg-brand-600/20 rounded-full pointer-events-none"></div>
+
+        <div class="relative flex-1 min-w-0">
+          <p class="text-brand-300 text-sm font-medium mb-1">Monday, March 30 · Week 13 of 2026</p>
+          <h1 class="font-display text-2xl sm:text-3xl lg:text-4xl font-medium leading-tight mb-2">
+            Welcome back,<br class="sm:hidden" /> <em class="not-italic text-brand-300">Alex!</em>
+          </h1>
+          <p class="text-brand-200 text-sm sm:text-base max-w-sm">
+            You're on a 5-day streak 🔥 Keep going — you're 60% through your current course!
+          </p>
+          <div class="mt-5 flex flex-wrap gap-3">
+            <a href="#continue" class="inline-flex items-center gap-2 bg-white text-brand-950 text-sm font-semibold
+                                     px-4 py-2.5 rounded-lg hover:bg-brand-50 transition-colors">
+              <i data-lucide="play-circle" class="w-4 h-4"></i> Continue Learning
+            </a>
+            <a href="#courses"
+              class="inline-flex items-center gap-2 text-white text-sm font-medium
+                                    px-4 py-2.5 rounded-lg border border-brand-700 hover:bg-brand-900 transition-colors">
+              Browse Catalog
+            </a>
+          </div>
+        </div>
+
+        <!-- Streak widget -->
+        <div
+          class="relative flex-shrink-0 bg-brand-900/60 backdrop-blur-sm rounded-xl px-5 py-4 border border-brand-800 w-full sm:w-auto">
+          <p class="text-xs text-brand-300 font-medium uppercase tracking-wider mb-3">This Week</p>
+          <div class="flex gap-2">
+            <div class="flex flex-col items-center gap-1">
+              <div
+                class="streak-day w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center text-xs font-bold">M
+              </div>
+              <div class="w-1.5 h-1.5 rounded-full bg-success"></div>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+              <div
+                class="streak-day w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center text-xs font-bold">T
+              </div>
+              <div class="w-1.5 h-1.5 rounded-full bg-success"></div>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+              <div
+                class="streak-day w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center text-xs font-bold">W
+              </div>
+              <div class="w-1.5 h-1.5 rounded-full bg-success"></div>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+              <div
+                class="streak-day w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center text-xs font-bold">T
+              </div>
+              <div class="w-1.5 h-1.5 rounded-full bg-success"></div>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+              <div
+                class="streak-day w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center text-xs font-bold">F
+              </div>
+              <div class="w-1.5 h-1.5 rounded-full bg-success"></div>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+              <div
+                class="streak-day w-8 h-8 rounded-lg bg-brand-800 flex items-center justify-center text-xs font-bold text-brand-400">
+                S</div>
+              <div class="w-1.5 h-1.5 rounded-full bg-brand-700"></div>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+              <div
+                class="streak-day w-8 h-8 rounded-lg bg-brand-800 flex items-center justify-center text-xs font-bold text-brand-400">
+                S</div>
+              <div class="w-1.5 h-1.5 rounded-full bg-brand-700"></div>
+            </div>
+          </div>
+          <p class="text-xs text-brand-300 mt-3">🔥 5-day streak · <span class="text-white font-semibold">12.5
+              hrs</span> this week</p>
+        </div>
+      </section>
+
+      <!-- ─────────────────────────────────────────
+         BLOCK 2: STATS CARDS
+    ───────────────────────────────────────── -->
+      <section>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Enrolled -->
+          <div class="bg-white rounded-xl border border-surface-border shadow-card p-5 hover-lift">
+            <div class="flex items-start justify-between mb-3">
+              <div class="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center">
+                <i data-lucide="book-open" class="w-5 h-5 text-brand-600"></i>
+              </div>
+              <span class="text-xs font-medium text-success bg-success-light px-2 py-0.5 rounded-full">+2 new</span>
+            </div>
+            <p class="text-2xl sm:text-3xl font-display font-medium text-ink">6</p>
+            <p class="text-sm text-ink-muted mt-0.5">Enrolled Courses</p>
+          </div>
+
+          <!-- In Progress -->
+          <div class="bg-white rounded-xl border border-surface-border shadow-card p-5 hover-lift">
+            <div class="flex items-start justify-between mb-3">
+              <div class="w-10 h-10 rounded-lg bg-warning-light flex items-center justify-center">
+                <i data-lucide="loader" class="w-5 h-5 text-warning"></i>
+              </div>
+              <span class="text-xs font-medium text-warning bg-warning-light px-2 py-0.5 rounded-full">Active</span>
+            </div>
+            <p class="text-2xl sm:text-3xl font-display font-medium text-ink">3</p>
+            <p class="text-sm text-ink-muted mt-0.5">In Progress</p>
+          </div>
+
+          <!-- Completed -->
+          <div class="bg-white rounded-xl border border-surface-border shadow-card p-5 hover-lift">
+            <div class="flex items-start justify-between mb-3">
+              <div class="w-10 h-10 rounded-lg bg-success-light flex items-center justify-center">
+                <i data-lucide="check-circle-2" class="w-5 h-5 text-success"></i>
+              </div>
+              <span class="text-xs font-medium text-success bg-success-light px-2 py-0.5 rounded-full">↑ 1 this
+                month</span>
+            </div>
+            <p class="text-2xl sm:text-3xl font-display font-medium text-ink">3</p>
+            <p class="text-sm text-ink-muted mt-0.5">Completed</p>
+          </div>
+
+          <!-- Hours -->
+          <div class="bg-white rounded-xl border border-surface-border shadow-card p-5 hover-lift">
+            <div class="flex items-start justify-between mb-3">
+              <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
+                <i data-lucide="clock" class="w-5 h-5 text-purple-600"></i>
+              </div>
+              <span class="text-xs font-medium text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full">+12.5h</span>
+            </div>
+            <p class="text-2xl sm:text-3xl font-display font-medium text-ink">84h</p>
+            <p class="text-sm text-ink-muted mt-0.5">Total Learning</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────────────────────────────────────
+         BLOCK 3: CONTINUE LEARNING
+    ───────────────────────────────────────── -->
+      <section id="continue">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-display text-xl font-medium text-ink">Continue Learning</h2>
+          <a href="#courses" class="text-sm text-brand-600 hover:underline font-medium">View all</a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <!-- Course card 1 -->
+          <div class="bg-white rounded-xl border border-surface-border shadow-card hover-lift overflow-hidden group">
+            <div class="relative h-40 bg-gradient-to-br from-brand-600 to-brand-800 overflow-hidden">
+              <div class="absolute inset-0 opacity-20">
+                <div class="absolute top-4 left-4 w-24 h-24 rounded-full bg-white/20"></div>
+                <div class="absolute -bottom-6 right-6 w-32 h-32 rounded-full bg-white/10"></div>
+              </div>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <i data-lucide="code-2" class="w-14 h-14 text-white/80"></i>
+              </div>
+              <span
+                class="absolute top-3 left-3 bg-black/30 text-white text-xs font-medium px-2 py-1 rounded-full backdrop-blur-sm">Development</span>
+              <button
+                class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-brand-950/30">
+                <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-raised">
+                  <i data-lucide="play" class="w-5 h-5 text-brand-700 ml-0.5"></i>
+                </div>
+              </button>
+            </div>
+            <div class="p-4">
+              <p class="text-xs text-ink-light mb-1">Lesson 7 of 12 · Web Development</p>
+              <h3 class="font-semibold text-ink text-sm leading-snug mb-3">Advanced React Patterns &amp; Performance
+              </h3>
+              <div class="mb-2">
+                <div class="flex justify-between text-xs text-ink-muted mb-1">
+                  <span>Progress</span>
+                  <span class="font-semibold text-brand-600">60%</span>
+                </div>
+                <div class="h-1.5 bg-surface-border rounded-full overflow-hidden">
+                  <div class="h-full bg-brand-600 rounded-full" style="width:60%"></div>
+                </div>
+              </div>
+              <div class="flex items-center justify-between mt-3">
+                <div class="flex items-center gap-1.5 text-xs text-ink-muted">
+                  <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                  <span>45 min left</span>
+                </div>
+                <a href="#" class="text-xs font-semibold text-brand-600 hover:underline">Resume →</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Course card 2 -->
+          <div class="bg-white rounded-xl border border-surface-border shadow-card hover-lift overflow-hidden group">
+            <div class="relative h-40 bg-gradient-to-br from-purple-600 to-pink-600 overflow-hidden">
+              <div class="absolute inset-0 opacity-20">
+                <div class="absolute top-4 left-4 w-24 h-24 rounded-full bg-white/20"></div>
+              </div>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <i data-lucide="pen-tool" class="w-14 h-14 text-white/80"></i>
+              </div>
+              <span
+                class="absolute top-3 left-3 bg-black/30 text-white text-xs font-medium px-2 py-1 rounded-full backdrop-blur-sm">Design</span>
+              <button
+                class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-purple-950/30">
+                <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-raised">
+                  <i data-lucide="play" class="w-5 h-5 text-purple-700 ml-0.5"></i>
+                </div>
+              </button>
+            </div>
+            <div class="p-4">
+              <p class="text-xs text-ink-light mb-1">Lesson 3 of 10 · UX/UI Design</p>
+              <h3 class="font-semibold text-ink text-sm leading-snug mb-3">UX Design Fundamentals: From Research to
+                Prototype</h3>
+              <div class="mb-2">
+                <div class="flex justify-between text-xs text-ink-muted mb-1">
+                  <span>Progress</span>
+                  <span class="font-semibold text-purple-600">28%</span>
+                </div>
+                <div class="h-1.5 bg-surface-border rounded-full overflow-hidden">
+                  <div class="h-full bg-purple-600 rounded-full" style="width:28%"></div>
+                </div>
+              </div>
+              <div class="flex items-center justify-between mt-3">
+                <div class="flex items-center gap-1.5 text-xs text-ink-muted">
+                  <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                  <span>2.5 hrs left</span>
+                </div>
+                <a href="#" class="text-xs font-semibold text-purple-600 hover:underline">Resume →</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Course card 3 -->
+          <div class="bg-white rounded-xl border border-surface-border shadow-card hover-lift overflow-hidden group">
+            <div class="relative h-40 bg-gradient-to-br from-emerald-600 to-teal-700 overflow-hidden">
+              <div class="absolute inset-0 flex items-center justify-center">
+                <i data-lucide="trending-up" class="w-14 h-14 text-white/80"></i>
+              </div>
+              <span
+                class="absolute top-3 left-3 bg-black/30 text-white text-xs font-medium px-2 py-1 rounded-full backdrop-blur-sm">Business</span>
+              <button
+                class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-emerald-950/30">
+                <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-raised">
+                  <i data-lucide="play" class="w-5 h-5 text-emerald-700 ml-0.5"></i>
+                </div>
+              </button>
+            </div>
+            <div class="p-4">
+              <p class="text-xs text-ink-light mb-1">Lesson 9 of 15 · Business Strategy</p>
+              <h3 class="font-semibold text-ink text-sm leading-snug mb-3">Growth Marketing: Strategy, Funnels &amp;
+                Analytics</h3>
+              <div class="mb-2">
+                <div class="flex justify-between text-xs text-ink-muted mb-1">
+                  <span>Progress</span>
+                  <span class="font-semibold text-emerald-600">55%</span>
+                </div>
+                <div class="h-1.5 bg-surface-border rounded-full overflow-hidden">
+                  <div class="h-full bg-emerald-600 rounded-full" style="width:55%"></div>
+                </div>
+              </div>
+              <div class="flex items-center justify-between mt-3">
+                <div class="flex items-center gap-1.5 text-xs text-ink-muted">
+                  <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                  <span>1 hr left</span>
+                </div>
+                <a href="#" class="text-xs font-semibold text-emerald-600 hover:underline">Resume →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────────────────────────────────────
+         BLOCK 4: MY COURSES (TABBED)
+    ───────────────────────────────────────── -->
+      <section id="courses">
+        <div class="flex items-center justify-between mb-1">
+          <h2 class="font-display text-xl font-medium text-ink">My Courses</h2>
+          <a href="page-02-course-catalog.html"
+            class="text-sm text-brand-600 hover:underline font-medium flex items-center gap-1">
+            Browse catalog <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex gap-6 border-b border-surface-border mb-5 mt-1 overflow-x-auto">
+          <button class="tab-btn tab-active text-sm pb-2.5 whitespace-nowrap" data-tab="all">All (6)</button>
+          <button class="tab-btn text-sm pb-2.5 text-ink-muted hover:text-ink whitespace-nowrap" data-tab="active">In
+            Progress (3)</button>
+          <button class="tab-btn text-sm pb-2.5 text-ink-muted hover:text-ink whitespace-nowrap"
+            data-tab="completed">Completed (3)</button>
+          <button class="tab-btn text-sm pb-2.5 text-ink-muted hover:text-ink whitespace-nowrap"
+            data-tab="wishlist">Wishlist (4)</button>
+        </div>
+
+        <!-- Course list -->
+        <div id="tab-all" class="tab-panel space-y-3">
+          <!-- Course row -->
+          <div
+            class="course-item bg-white rounded-xl border border-surface-border shadow-card p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover-lift"
+            data-status="active">
+            <div
+              class="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="code-2" class="w-6 h-6 text-white"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-1">
+                <h3 class="font-semibold text-sm text-ink truncate">Advanced React Patterns &amp; Performance</h3>
+                <span
+                  class="flex-shrink-0 text-xs bg-warning-light text-warning font-medium px-2 py-0.5 rounded-full">In
+                  Progress</span>
+              </div>
+              <p class="text-xs text-ink-light mb-2">Web Development · 12 lessons · Instructor: Dr. J. Park</p>
+              <div class="flex items-center gap-3">
+                <div class="flex-1 h-1.5 bg-surface-border rounded-full overflow-hidden">
+                  <div class="h-full bg-brand-600 rounded-full" style="width:60%"></div>
+                </div>
+                <span class="text-xs font-semibold text-brand-600 flex-shrink-0">60%</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 sm:flex-col sm:items-end">
+              <a href="#"
+                class="text-xs font-semibold bg-brand-600 text-white px-3 py-1.5 rounded-lg hover:bg-brand-700 transition-colors">Resume</a>
+              <button class="text-ink-light hover:text-ink transition-colors" onclick="toggleDropdown('course-menu-1')">
+                <i data-lucide="more-vertical" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="course-item bg-white rounded-xl border border-surface-border shadow-card p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover-lift"
+            data-status="active">
+            <div
+              class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="pen-tool" class="w-6 h-6 text-white"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-1">
+                <h3 class="font-semibold text-sm text-ink truncate">UX Design Fundamentals</h3>
+                <span
+                  class="flex-shrink-0 text-xs bg-warning-light text-warning font-medium px-2 py-0.5 rounded-full">In
+                  Progress</span>
+              </div>
+              <p class="text-xs text-ink-light mb-2">UX/UI Design · 10 lessons · Instructor: M. Santos</p>
+              <div class="flex items-center gap-3">
+                <div class="flex-1 h-1.5 bg-surface-border rounded-full overflow-hidden">
+                  <div class="h-full bg-purple-600 rounded-full" style="width:28%"></div>
+                </div>
+                <span class="text-xs font-semibold text-purple-600 flex-shrink-0">28%</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 sm:flex-col sm:items-end">
+              <a href="#"
+                class="text-xs font-semibold bg-purple-600 text-white px-3 py-1.5 rounded-lg hover:bg-purple-700 transition-colors">Resume</a>
+              <button class="text-ink-light hover:text-ink transition-colors"><i data-lucide="more-vertical"
+                  class="w-4 h-4"></i></button>
+            </div>
+          </div>
+
+          <div
+            class="course-item bg-white rounded-xl border border-surface-border shadow-card p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover-lift"
+            data-status="active">
+            <div
+              class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="trending-up" class="w-6 h-6 text-white"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-1">
+                <h3 class="font-semibold text-sm text-ink truncate">Growth Marketing: Strategy, Funnels &amp; Analytics
+                </h3>
+                <span
+                  class="flex-shrink-0 text-xs bg-warning-light text-warning font-medium px-2 py-0.5 rounded-full">In
+                  Progress</span>
+              </div>
+              <p class="text-xs text-ink-light mb-2">Business · 15 lessons · Instructor: L. Chen</p>
+              <div class="flex items-center gap-3">
+                <div class="flex-1 h-1.5 bg-surface-border rounded-full overflow-hidden">
+                  <div class="h-full bg-emerald-600 rounded-full" style="width:55%"></div>
+                </div>
+                <span class="text-xs font-semibold text-emerald-600 flex-shrink-0">55%</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 sm:flex-col sm:items-end">
+              <a href="#"
+                class="text-xs font-semibold bg-emerald-600 text-white px-3 py-1.5 rounded-lg hover:bg-emerald-700 transition-colors">Resume</a>
+              <button class="text-ink-light hover:text-ink transition-colors"><i data-lucide="more-vertical"
+                  class="w-4 h-4"></i></button>
+            </div>
+          </div>
+
+          <!-- Completed courses -->
+          <div
+            class="course-item bg-white rounded-xl border border-surface-border shadow-card p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover-lift"
+            data-status="completed">
+            <div
+              class="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center flex-shrink-0 relative">
+              <i data-lucide="layers" class="w-6 h-6 text-white"></i>
+              <div class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-success flex items-center justify-center">
+                <i data-lucide="check" class="w-3 h-3 text-white"></i>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-1">
+                <h3 class="font-semibold text-sm text-ink truncate">CSS Mastery: Flexbox, Grid &amp; Animations</h3>
+                <span class="flex-shrink-0 text-xs bg-success-light text-success font-medium px-2 py-0.5 rounded-full">✓
+                  Completed</span>
+              </div>
+              <p class="text-xs text-ink-light mb-2">Web Development · 8 lessons · Completed Jan 14, 2026</p>
+              <div class="flex items-center gap-3">
+                <div class="flex-1 h-1.5 bg-surface-border rounded-full overflow-hidden">
+                  <div class="h-full bg-success rounded-full w-full"></div>
+                </div>
+                <span class="text-xs font-semibold text-success flex-shrink-0">100%</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 sm:flex-col sm:items-end">
+              <a href="#"
+                class="text-xs font-semibold text-ink border border-surface-border px-3 py-1.5 rounded-lg hover:bg-surface-muted transition-colors">Certificate</a>
+              <button class="text-ink-light hover:text-ink transition-colors"><i data-lucide="more-vertical"
+                  class="w-4 h-4"></i></button>
+            </div>
+          </div>
+
+          <div
+            class="course-item bg-white rounded-xl border border-surface-border shadow-card p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover-lift"
+            data-status="completed">
+            <div
+              class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center flex-shrink-0 relative">
+              <i data-lucide="database" class="w-6 h-6 text-white"></i>
+              <div class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-success flex items-center justify-center">
+                <i data-lucide="check" class="w-3 h-3 text-white"></i>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-1">
+                <h3 class="font-semibold text-sm text-ink truncate">SQL &amp; Database Design Fundamentals</h3>
+                <span class="flex-shrink-0 text-xs bg-success-light text-success font-medium px-2 py-0.5 rounded-full">✓
+                  Completed</span>
+              </div>
+              <p class="text-xs text-ink-light mb-2">Data · 10 lessons · Completed Dec 22, 2025</p>
+              <div class="flex items-center gap-3">
+                <div class="flex-1 h-1.5 bg-surface-border rounded-full overflow-hidden">
+                  <div class="h-full bg-success rounded-full w-full"></div>
+                </div>
+                <span class="text-xs font-semibold text-success flex-shrink-0">100%</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 sm:flex-col sm:items-end">
+              <a href="#"
+                class="text-xs font-semibold text-ink border border-surface-border px-3 py-1.5 rounded-lg hover:bg-surface-muted transition-colors">Certificate</a>
+              <button class="text-ink-light hover:text-ink transition-colors"><i data-lucide="more-vertical"
+                  class="w-4 h-4"></i></button>
+            </div>
+          </div>
+
+          <div
+            class="course-item bg-white rounded-xl border border-surface-border shadow-card p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover-lift"
+            data-status="completed">
+            <div
+              class="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-500 to-blue-700 flex items-center justify-center flex-shrink-0 relative">
+              <i data-lucide="globe" class="w-6 h-6 text-white"></i>
+              <div class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-success flex items-center justify-center">
+                <i data-lucide="check" class="w-3 h-3 text-white"></i>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-1">
+                <h3 class="font-semibold text-sm text-ink truncate">HTML &amp; CSS: Building Your First Website</h3>
+                <span class="flex-shrink-0 text-xs bg-success-light text-success font-medium px-2 py-0.5 rounded-full">✓
+                  Completed</span>
+              </div>
+              <p class="text-xs text-ink-light mb-2">Web Development · 6 lessons · Completed Nov 5, 2025</p>
+              <div class="flex items-center gap-3">
+                <div class="flex-1 h-1.5 bg-surface-border rounded-full overflow-hidden">
+                  <div class="h-full bg-success rounded-full w-full"></div>
+                </div>
+                <span class="text-xs font-semibold text-success flex-shrink-0">100%</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 sm:flex-col sm:items-end">
+              <a href="#"
+                class="text-xs font-semibold text-ink border border-surface-border px-3 py-1.5 rounded-lg hover:bg-surface-muted transition-colors">Certificate</a>
+              <button class="text-ink-light hover:text-ink transition-colors"><i data-lucide="more-vertical"
+                  class="w-4 h-4"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hidden tab panels (populated by JS) -->
+        <div id="tab-active" class="tab-panel hidden space-y-3"></div>
+        <div id="tab-completed" class="tab-panel hidden space-y-3"></div>
+        <div id="tab-wishlist" class="tab-panel hidden">
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            <!-- Wishlist items -->
+            <div class="bg-white rounded-xl border border-surface-border shadow-card overflow-hidden hover-lift">
+              <div class="h-28 bg-gradient-to-br from-rose-500 to-pink-700 flex items-center justify-center">
+                <i data-lucide="mic" class="w-10 h-10 text-white/80"></i>
+              </div>
+              <div class="p-3">
+                <h4 class="text-sm font-semibold text-ink mb-1 line-clamp-2">Public Speaking Masterclass</h4>
+                <p class="text-xs text-ink-light mb-2">Communication · $89</p>
+                <button
+                  class="w-full text-xs font-semibold bg-brand-600 text-white py-2 rounded-lg hover:bg-brand-700 transition-colors">Enroll
+                  Now</button>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl border border-surface-border shadow-card overflow-hidden hover-lift">
+              <div class="h-28 bg-gradient-to-br from-violet-600 to-indigo-700 flex items-center justify-center">
+                <i data-lucide="cpu" class="w-10 h-10 text-white/80"></i>
+              </div>
+              <div class="p-3">
+                <h4 class="text-sm font-semibold text-ink mb-1 line-clamp-2">Machine Learning with Python</h4>
+                <p class="text-xs text-ink-light mb-2">Data Science · $129</p>
+                <button
+                  class="w-full text-xs font-semibold bg-brand-600 text-white py-2 rounded-lg hover:bg-brand-700 transition-colors">Enroll
+                  Now</button>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl border border-surface-border shadow-card overflow-hidden hover-lift">
+              <div class="h-28 bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                <i data-lucide="camera" class="w-10 h-10 text-white/80"></i>
+              </div>
+              <div class="p-3">
+                <h4 class="text-sm font-semibold text-ink mb-1 line-clamp-2">Photography Fundamentals</h4>
+                <p class="text-xs text-ink-light mb-2">Creative · $59</p>
+                <button
+                  class="w-full text-xs font-semibold bg-brand-600 text-white py-2 rounded-lg hover:bg-brand-700 transition-colors">Enroll
+                  Now</button>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl border border-surface-border shadow-card overflow-hidden hover-lift">
+              <div class="h-28 bg-gradient-to-br from-teal-500 to-cyan-700 flex items-center justify-center">
+                <i data-lucide="bar-chart" class="w-10 h-10 text-white/80"></i>
+              </div>
+              <div class="p-3">
+                <h4 class="text-sm font-semibold text-ink mb-1 line-clamp-2">Financial Modelling &amp; Valuation</h4>
+                <p class="text-xs text-ink-light mb-2">Finance · $149</p>
+                <button
+                  class="w-full text-xs font-semibold bg-brand-600 text-white py-2 rounded-lg hover:bg-brand-700 transition-colors">Enroll
+                  Now</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────────────────────────────────────
+         BLOCK 5: BOTTOM GRID — Schedule + Achievements
+    ───────────────────────────────────────── -->
+      <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Schedule -->
+        <div class="lg:col-span-2 bg-white rounded-xl border border-surface-border shadow-card p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-display text-lg font-medium text-ink">Upcoming Schedule</h2>
+            <button class="text-xs text-brand-600 hover:underline font-medium">View calendar</button>
+          </div>
+          <div class="space-y-3">
+            <!-- Event -->
+            <div class="flex gap-4 p-3 rounded-xl bg-brand-50 border border-brand-100">
+              <div class="flex-shrink-0 text-center w-12">
+                <p class="text-xs font-semibold text-brand-700 uppercase">MON</p>
+                <p class="text-xl font-display font-medium text-brand-700">30</p>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <p class="text-sm font-semibold text-ink">Office Hours: Advanced React Q&amp;A</p>
+                  <span class="flex-shrink-0 text-xs bg-brand-600 text-white px-2 py-0.5 rounded-full">Live</span>
+                </div>
+                <p class="text-xs text-ink-muted mt-0.5">10:00 AM – 11:00 AM · Zoom</p>
+                <p class="text-xs text-ink-light mt-0.5">with Dr. J. Park</p>
+              </div>
+            </div>
+
+            <div class="flex gap-4 p-3 rounded-xl bg-surface-muted border border-surface-border">
+              <div class="flex-shrink-0 text-center w-12">
+                <p class="text-xs font-semibold text-ink-muted uppercase">WED</p>
+                <p class="text-xl font-display font-medium text-ink">1</p>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <p class="text-sm font-semibold text-ink">Assignment Due: UX Wireframe Project</p>
+                  <span class="flex-shrink-0 text-xs bg-warning-light text-warning px-2 py-0.5 rounded-full">Due</span>
+                </div>
+                <p class="text-xs text-ink-muted mt-0.5">Midnight · UX Design Fundamentals</p>
+              </div>
+            </div>
+
+            <div class="flex gap-4 p-3 rounded-xl bg-surface-muted border border-surface-border">
+              <div class="flex-shrink-0 text-center w-12">
+                <p class="text-xs font-semibold text-ink-muted uppercase">FRI</p>
+                <p class="text-xl font-display font-medium text-ink">4</p>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <p class="text-sm font-semibold text-ink">Webinar: Growth Hacking 2026</p>
+                  <span
+                    class="flex-shrink-0 text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">Event</span>
+                </div>
+                <p class="text-xs text-ink-muted mt-0.5">2:00 PM – 4:00 PM · Growth Marketing</p>
+              </div>
+            </div>
+
+            <div class="flex gap-4 p-3 rounded-xl bg-surface-muted border border-surface-border">
+              <div class="flex-shrink-0 text-center w-12">
+                <p class="text-xs font-semibold text-ink-muted uppercase">MON</p>
+                <p class="text-xl font-display font-medium text-ink">7</p>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <p class="text-sm font-semibold text-ink">Quiz: SQL Advanced Topics</p>
+                  <span class="flex-shrink-0 text-xs bg-danger-light text-danger px-2 py-0.5 rounded-full">Quiz</span>
+                </div>
+                <p class="text-xs text-ink-muted mt-0.5">Opens at 9:00 AM · 45 min window</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Achievements column -->
+        <div class="flex flex-col gap-5">
+
+          <!-- Overall progress ring -->
+          <div class="bg-white rounded-xl border border-surface-border shadow-card p-5">
+            <h3 class="font-display text-base font-medium text-ink mb-4">Overall Progress</h3>
+            <div class="flex items-center gap-4">
+              <div class="relative flex-shrink-0">
+                <svg width="80" height="80" viewBox="0 0 80 80">
+                  <circle class="ring-track" cx="40" cy="40" r="34" />
+                  <circle class="ring-fill" cx="40" cy="40" r="34" stroke="#4a6cf7" stroke-dasharray="213.6"
+                    stroke-dashoffset="85.4" id="overall-ring" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <span class="text-base font-bold text-ink">60%</span>
+                </div>
+              </div>
+              <div class="space-y-2 flex-1">
+                <div class="flex justify-between text-xs">
+                  <span class="text-ink-muted">Completed</span>
+                  <span class="font-semibold text-success">3 / 6</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                  <span class="text-ink-muted">Lessons done</span>
+                  <span class="font-semibold">29 / 61</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                  <span class="text-ink-muted">Certificates</span>
+                  <span class="font-semibold">3</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Certificates -->
+          <div class="bg-white rounded-xl border border-surface-border shadow-card p-5">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-display text-base font-medium text-ink">Certificates</h3>
+              <a href="#" class="text-xs text-brand-600 hover:underline">View all</a>
+            </div>
+            <div class="space-y-2.5">
+              <div class="flex items-center gap-3 p-2.5 rounded-lg border border-amber-200 bg-amber-50">
+                <div class="w-8 h-8 rounded-lg bg-amber-400 flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="award" class="w-4 h-4 text-white"></i>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs font-semibold text-ink truncate">HTML &amp; CSS Basics</p>
+                  <p class="text-[10px] text-ink-light">Issued Nov 5, 2025</p>
+                </div>
+                <a href="#" class="ml-auto flex-shrink-0 text-ink-light hover:text-ink transition-colors">
+                  <i data-lucide="download" class="w-4 h-4"></i>
+                </a>
+              </div>
+              <div class="flex items-center gap-3 p-2.5 rounded-lg border border-amber-200 bg-amber-50">
+                <div class="w-8 h-8 rounded-lg bg-amber-400 flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="award" class="w-4 h-4 text-white"></i>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs font-semibold text-ink truncate">SQL &amp; Database Design</p>
+                  <p class="text-[10px] text-ink-light">Issued Dec 22, 2025</p>
+                </div>
+                <a href="#" class="ml-auto flex-shrink-0 text-ink-light hover:text-ink transition-colors">
+                  <i data-lucide="download" class="w-4 h-4"></i>
+                </a>
+              </div>
+              <div class="flex items-center gap-3 p-2.5 rounded-lg border border-amber-200 bg-amber-50">
+                <div class="w-8 h-8 rounded-lg bg-amber-400 flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="award" class="w-4 h-4 text-white"></i>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs font-semibold text-ink truncate">CSS Mastery</p>
+                  <p class="text-[10px] text-ink-light">Issued Jan 14, 2026</p>
+                </div>
+                <a href="#" class="ml-auto flex-shrink-0 text-ink-light hover:text-ink transition-colors">
+                  <i data-lucide="download" class="w-4 h-4"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent activity -->
+          <div class="bg-white rounded-xl border border-surface-border shadow-card p-5">
+            <h3 class="font-display text-base font-medium text-ink mb-3">Recent Activity</h3>
+            <ul class="space-y-3">
+              <li class="flex items-start gap-3">
+                <div
+                  class="w-6 h-6 rounded-full bg-success-light flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i data-lucide="check" class="w-3 h-3 text-success"></i>
+                </div>
+                <div>
+                  <p class="text-xs text-ink">Completed lesson <span class="font-semibold">Intro to Typography</span>
+                  </p>
+                  <p class="text-[10px] text-ink-light">2 hours ago</p>
+                </div>
+              </li>
+              <li class="flex items-start gap-3">
+                <div class="w-6 h-6 rounded-full bg-brand-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i data-lucide="message-circle" class="w-3 h-3 text-brand-600"></i>
+                </div>
+                <div>
+                  <p class="text-xs text-ink">Posted in <span class="font-semibold">React discussion</span></p>
+                  <p class="text-[10px] text-ink-light">5 hours ago</p>
+                </div>
+              </li>
+              <li class="flex items-start gap-3">
+                <div
+                  class="w-6 h-6 rounded-full bg-warning-light flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i data-lucide="play" class="w-3 h-3 text-warning"></i>
+                </div>
+                <div>
+                  <p class="text-xs text-ink">Started <span class="font-semibold">Custom Hooks in React</span></p>
+                  <p class="text-[10px] text-ink-light">Yesterday</p>
+                </div>
+              </li>
+              <li class="flex items-start gap-3">
+                <div class="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i data-lucide="star" class="w-3 h-3 text-purple-600"></i>
+                </div>
+                <div>
+                  <p class="text-xs text-ink">Rated <span class="font-semibold">UX Design Fundamentals</span> ⭐⭐⭐⭐⭐</p>
+                  <p class="text-[10px] text-ink-light">2 days ago</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────────────────────────────────────
+         BLOCK 6: RECOMMENDED COURSES
+    ───────────────────────────────────────── -->
+      <section>
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="font-display text-xl font-medium text-ink">Recommended for You</h2>
+            <p class="text-sm text-ink-muted mt-0.5">Based on your interests in web development and design</p>
+          </div>
+          <a href="page-02-course-catalog.html"
+            class="hidden sm:inline-flex items-center gap-1.5 text-sm text-brand-600 hover:underline font-medium">
+            See all <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+          <!-- Rec card -->
+          <div class="bg-white rounded-xl border border-surface-border shadow-card overflow-hidden hover-lift group">
+            <div
+              class="relative h-36 bg-gradient-to-br from-violet-600 to-indigo-700 flex items-center justify-center overflow-hidden">
+              <i data-lucide="cpu" class="w-12 h-12 text-white/80"></i>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+              <button
+                class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center">
+                  <i data-lucide="play" class="w-4 h-4 text-violet-700 ml-0.5"></i>
+                </div>
+              </button>
+            </div>
+            <div class="p-4">
+              <div class="flex items-center gap-2 mb-1.5">
+                <span
+                  class="text-[10px] font-semibold uppercase tracking-wide text-violet-600 bg-violet-50 px-1.5 py-0.5 rounded">Data
+                  Science</span>
+                <div class="flex items-center gap-0.5 text-[10px] text-amber-500 font-semibold ml-auto">
+                  ★ 4.9 <span class="text-ink-light font-normal">(1.2k)</span>
+                </div>
+              </div>
+              <h4 class="text-sm font-semibold text-ink mb-1 line-clamp-2">Machine Learning with Python</h4>
+              <p class="text-xs text-ink-muted mb-3">Dr. A. Kumar · 18 lessons · 24 hrs</p>
+              <div class="flex items-center justify-between">
+                <span class="font-display text-base font-medium text-ink">$129</span>
+                <button
+                  class="text-xs font-semibold bg-brand-600 text-white px-3 py-1.5 rounded-lg hover:bg-brand-700 transition-colors">Enroll</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-surface-border shadow-card overflow-hidden hover-lift group">
+            <div
+              class="relative h-36 bg-gradient-to-br from-rose-500 to-pink-700 flex items-center justify-center overflow-hidden">
+              <i data-lucide="figma" class="w-12 h-12 text-white/80"></i>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+              <button
+                class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center">
+                  <i data-lucide="play" class="w-4 h-4 text-rose-700 ml-0.5"></i>
+                </div>
+              </button>
+            </div>
+            <div class="p-4">
+              <div class="flex items-center gap-2 mb-1.5">
+                <span
+                  class="text-[10px] font-semibold uppercase tracking-wide text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded">Design</span>
+                <div class="flex items-center gap-0.5 text-[10px] text-amber-500 font-semibold ml-auto">
+                  ★ 4.8 <span class="text-ink-light font-normal">(876)</span>
+                </div>
+              </div>
+              <h4 class="text-sm font-semibold text-ink mb-1 line-clamp-2">Figma Advanced: Components &amp; Auto Layout
+              </h4>
+              <p class="text-xs text-ink-muted mb-3">M. Santos · 12 lessons · 14 hrs</p>
+              <div class="flex items-center justify-between">
+                <span class="font-display text-base font-medium text-ink">$89</span>
+                <button
+                  class="text-xs font-semibold bg-brand-600 text-white px-3 py-1.5 rounded-lg hover:bg-brand-700 transition-colors">Enroll</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-surface-border shadow-card overflow-hidden hover-lift group">
+            <div
+              class="relative h-36 bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center overflow-hidden">
+              <i data-lucide="server" class="w-12 h-12 text-white/80"></i>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+              <button
+                class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center">
+                  <i data-lucide="play" class="w-4 h-4 text-amber-700 ml-0.5"></i>
+                </div>
+              </button>
+            </div>
+            <div class="p-4">
+              <div class="flex items-center gap-2 mb-1.5">
+                <span
+                  class="text-[10px] font-semibold uppercase tracking-wide text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">Backend</span>
+                <div class="flex items-center gap-0.5 text-[10px] text-amber-500 font-semibold ml-auto">
+                  ★ 4.7 <span class="text-ink-light font-normal">(543)</span>
+                </div>
+              </div>
+              <h4 class="text-sm font-semibold text-ink mb-1 line-clamp-2">Node.js &amp; Express: REST API Mastery</h4>
+              <p class="text-xs text-ink-muted mb-3">K. Williams · 14 lessons · 18 hrs</p>
+              <div class="flex items-center justify-between">
+                <span class="font-display text-base font-medium text-ink">$109</span>
+                <button
+                  class="text-xs font-semibold bg-brand-600 text-white px-3 py-1.5 rounded-lg hover:bg-brand-700 transition-colors">Enroll</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-surface-border shadow-card overflow-hidden hover-lift group">
+            <div
+              class="relative h-36 bg-gradient-to-br from-teal-500 to-cyan-700 flex items-center justify-center overflow-hidden">
+              <i data-lucide="bar-chart-2" class="w-12 h-12 text-white/80"></i>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+              <button
+                class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center">
+                  <i data-lucide="play" class="w-4 h-4 text-teal-700 ml-0.5"></i>
+                </div>
+              </button>
+            </div>
+            <div class="p-4">
+              <div class="flex items-center gap-2 mb-1.5">
+                <span
+                  class="text-[10px] font-semibold uppercase tracking-wide text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded">Analytics</span>
+                <div class="flex items-center gap-0.5 text-[10px] text-amber-500 font-semibold ml-auto">
+                  ★ 4.6 <span class="text-ink-light font-normal">(289)</span>
+                </div>
+              </div>
+              <h4 class="text-sm font-semibold text-ink mb-1 line-clamp-2">Google Analytics 4 &amp; Data Studio</h4>
+              <p class="text-xs text-ink-muted mb-3">L. Chen · 8 lessons · 10 hrs</p>
+              <div class="flex items-center justify-between">
+                <span class="font-display text-base font-medium text-ink">$79</span>
+                <button
+                  class="text-xs font-semibold bg-brand-600 text-white px-3 py-1.5 rounded-lg hover:bg-brand-700 transition-colors">Enroll</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main><!-- /main -->
+  </div><!-- /content area -->
+
+  <!-- ═══════════════════════════════════════════════════════
+     MOBILE BOTTOM NAV
+═══════════════════════════════════════════════════════ -->
+  <nav class="fixed bottom-0 inset-x-0 bg-white border-t border-surface-border z-20 flex lg:hidden">
+    <a href="#" class="flex-1 flex flex-col items-center justify-center py-2.5 gap-0.5 text-brand-600">
+      <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+      <span class="text-[10px] font-semibold">Home</span>
+    </a>
+    <a href="#courses"
+      class="flex-1 flex flex-col items-center justify-center py-2.5 gap-0.5 text-ink-light hover:text-ink transition-colors">
+      <i data-lucide="book-open" class="w-5 h-5"></i>
+      <span class="text-[10px]">Courses</span>
+    </a>
+    <a href="#"
+      class="flex-1 flex flex-col items-center justify-center py-2.5 gap-0.5 text-ink-light hover:text-ink transition-colors">
+      <i data-lucide="search" class="w-5 h-5"></i>
+      <span class="text-[10px]">Search</span>
+    </a>
+    <a href="#"
+      class="flex-1 flex flex-col items-center justify-center py-2.5 gap-0.5 text-ink-light hover:text-ink transition-colors relative">
+      <i data-lucide="bell" class="w-5 h-5"></i>
+      <span class="text-[10px]">Alerts</span>
+      <span class="absolute top-2 right-6 w-1.5 h-1.5 bg-brand-600 rounded-full"></span>
+    </a>
+    <a href="#"
+      class="flex-1 flex flex-col items-center justify-center py-2.5 gap-0.5 text-ink-light hover:text-ink transition-colors">
+      <i data-lucide="user" class="w-5 h-5"></i>
+      <span class="text-[10px]">Profile</span>
+    </a>
+  </nav>
+
+  <!-- bottom padding for mobile nav -->
+  <div class="h-16 lg:hidden"></div>
+
+  <!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════ -->
+  <script>
+    /* ── Init Lucide icons ── */
+    lucide.createIcons();
+
+    /* ── Mobile sidebar ── */
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    function openMobileSidebar() {
+      sidebar.classList.remove('-translate-x-full');
+      overlay.classList.remove('hidden', 'opacity-0');
+      requestAnimationFrame(() => overlay.classList.replace('opacity-0', 'opacity-100'));
+    }
+
+    function closeMobileSidebar() {
+      sidebar.classList.add('-translate-x-full');
+      overlay.classList.replace('opacity-100', 'opacity-0');
+      setTimeout(() => overlay.classList.add('hidden'), 250);
+    }
+
+    /* ── Desktop sidebar collapse ── */
+    function toggleCollapse() {
+      sidebar.classList.toggle('collapsed');
+      lucide.createIcons();
+    }
+
+    /* ── Generic dropdown toggle ── */
+    function toggleDropdown(id) {
+      const menu = document.getElementById(id);
+      if (!menu) return;
+      const isOpen = !menu.classList.contains('hidden');
+      // close all
+      document.querySelectorAll('.dropdown-menu').forEach(m => {
+        m.classList.add('hidden');
+      });
+      if (!isOpen) menu.classList.remove('hidden');
+    }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+      const clickedToggle = e.target.closest('[onclick^="toggleDropdown"]');
+      const clickedMenu = e.target.closest('.dropdown-menu');
+      if (!clickedToggle && !clickedMenu) {
+        document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.add('hidden'));
+      }
+    });
+
+    /* ── Tabs ── */
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+
+    // Populate active/completed panels by filtering from "all"
+    function populateFilteredPanels() {
+      const allItems = document.querySelectorAll('#tab-all .course-item');
+      ['active', 'completed'].forEach(status => {
+        const panel = document.getElementById('tab-' + status);
+        allItems.forEach(item => {
+          if (item.dataset.status === status) {
+            panel.appendChild(item.cloneNode(true));
+          }
+        });
+      });
+    }
+
+    populateFilteredPanels();
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach(b => {
+          b.classList.remove('tab-active');
+          b.classList.add('text-ink-muted');
+          b.classList.remove('text-brand-700');
+        });
+        btn.classList.add('tab-active');
+        btn.classList.remove('text-ink-muted');
+
+        const target = btn.dataset.tab;
+        tabPanels.forEach(panel => {
+          panel.id === 'tab-' + target
+            ? panel.classList.remove('hidden')
+            : panel.classList.add('hidden');
+        });
+      });
+    });
+
+    /* ── Animate progress ring on load ── */
+    window.addEventListener('load', () => {
+      const ring = document.getElementById('overall-ring');
+      if (ring) {
+        ring.style.strokeDashoffset = '213.6'; // start at 0%
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            ring.style.strokeDashoffset = '85.4'; // animate to 60%
+          }, 300);
+        });
+      }
+    });
+
+    /* ── Re-init lucide after dynamic content ── */
+    const observer = new MutationObserver(() => lucide.createIcons());
+    observer.observe(document.body, { childList: true, subtree: true });
+  </script>
+
+</body>
+
+</html>
